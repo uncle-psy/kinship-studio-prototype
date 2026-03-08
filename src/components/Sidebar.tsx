@@ -1,0 +1,109 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const navSections = [
+  {
+    label: "Assets",
+    items: [
+      { href: "/assets", icon: "🖼️", label: "Library", badge: "63" },
+      { href: "/assets/upload", icon: "📤", label: "Upload" },
+      { href: "/packs", icon: "📦", label: "Asset Packs", tag: "NEW" },
+    ],
+  },
+  {
+    label: "AI & Knowledge",
+    items: [
+      { href: "/knowledge", icon: "📚", label: "Knowledge" },
+      { href: "/prompts", icon: "🤖", label: "Prompts" },
+      { href: "/progress", icon: "❤️", label: "HEARTS" },
+    ],
+  },
+  {
+    label: "Games",
+    items: [
+      { href: "/games", icon: "🎮", label: "All Games" },
+    ],
+  },
+];
+
+export function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="fixed left-0 top-[60px] w-[220px] h-[calc(100vh-60px)] bg-sidebar border-r border-card-border overflow-y-auto py-4 px-3">
+      {/* Platform */}
+      <div className="mb-4">
+        <div className="text-[10px] font-semibold text-muted uppercase tracking-wider px-3 mb-1">
+          Platform
+        </div>
+        <div className="px-3 py-1.5 text-accent text-sm">
+          🎮 sample-platform
+        </div>
+      </div>
+
+      {/* Nav sections */}
+      {navSections.map((section) => (
+        <div key={section.label} className="mb-4">
+          <div className="text-[10px] font-semibold text-muted uppercase tracking-wider px-3 mb-1">
+            {section.label}
+          </div>
+          <ul className="space-y-0.5">
+            {section.items.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href === "/assets" && pathname === "/assets") ||
+                (item.href !== "/assets" && pathname.startsWith(item.href) && item.href !== "/assets");
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      isActive
+                        ? "bg-accent/20 text-accent"
+                        : "text-foreground/80 hover:bg-card hover:text-white"
+                    }`}
+                  >
+                    <span className="text-base">{item.icon}</span>
+                    <span className="flex-1">{item.label}</span>
+                    {item.badge && (
+                      <span className="bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                    {item.tag && (
+                      <span className="bg-accent text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
+                        {item.tag}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+
+      {/* Bottom items */}
+      <div className="mt-2">
+        <ul>
+          <li>
+            <Link
+              href="/platform-settings"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                pathname === "/platform-settings"
+                  ? "bg-accent/20 text-accent"
+                  : "text-foreground/80 hover:bg-card hover:text-white"
+              }`}
+            >
+              <span className="text-base">⚙️</span>
+              <span>Platform Settings</span>
+            </Link>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  );
+}
