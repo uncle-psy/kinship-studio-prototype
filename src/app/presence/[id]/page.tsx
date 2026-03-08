@@ -170,6 +170,8 @@ export default function PresenceDetailPage() {
 
   // Editable fields
   const [name, setName] = useState("");
+  const [briefDescription, setBriefDescription] = useState("");
+  const [editingBrief, setEditingBrief] = useState(false);
   const [description, setDescription] = useState("");
   const [backstory, setBackstory] = useState("");
 
@@ -179,6 +181,7 @@ export default function PresenceDetailPage() {
   const [backSaving, setBackSaving] = useState(false);
   const [backFlash, setBackFlash]   = useState(false);
   const [nameSaving, setNameSaving] = useState(false);
+  const [briefSaving, setBriefSaving] = useState(false);
 
   // Relationships
   const [allKBs, setAllKBs]       = useState<KnowledgeBase[]>([]);
@@ -217,6 +220,7 @@ export default function PresenceDetailPage() {
       const p: Presence = data.presence;
       setPresence(p);
       setName(p.name);
+      setBriefDescription(p.briefDescription || "");
       setDescription(p.description || "");
       setBackstory(p.backstory || "");
       setSelectedKBIds(p.knowledgeBaseIds || []);
@@ -244,6 +248,19 @@ export default function PresenceDetailPage() {
     });
     if (res.ok) { const d = await res.json(); setPresence(d.presence); setName(d.presence.name); }
     setNameSaving(false);
+  }
+
+  // ── Save brief description ──
+  async function handleSaveBriefDescription() {
+    setBriefSaving(true);
+    const res = await fetch(`/api/presence/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ briefDescription }),
+    });
+    if (res.ok) { const d = await res.json(); setPresence(d.presence); }
+    setBriefSaving(false);
+    setEditingBrief(false);
   }
 
   // ── Save description ──
@@ -380,12 +397,58 @@ export default function PresenceDetailPage() {
         </button>
       </div>
 
-      {/* Brief description badge */}
-      {presence.briefDescription && (
-        <p className="text-sm text-muted mb-6 ml-[52px] italic">
-          &ldquo;{presence.briefDescription}&rdquo;
-        </p>
-      )}
+      {/* Brief description — inline editable */}
+      <div className="ml-[52px] mb-6 flex items-start gap-2">
+        {editingBrief ? (
+          <>
+            <input
+              type="text"
+              value={briefDescription}
+              onChange={(e) => setBriefDescription(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSaveBriefDescription();
+                if (e.key === "Escape") { setBriefDescription(presence.briefDescription || ""); setEditingBrief(false); }
+              }}
+              autoFocus
+              placeholder="Brief description of this being…"
+              className="flex-1 text-sm text-muted bg-input border border-accent/40 rounded-lg px-3 py-1.5 italic focus:outline-none focus:border-accent/70 min-w-0"
+            />
+            <button
+              onClick={handleSaveBriefDescription}
+              disabled={briefSaving}
+              className="shrink-0 bg-accent hover:bg-accent-dark text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-60"
+            >
+              {briefSaving
+                ? <Icon icon="lucide:loader-2" width={12} height={12} className="animate-spin" />
+                : <Icon icon="lucide:check" width={12} height={12} />}
+              Save
+            </button>
+            <button
+              onClick={() => { setBriefDescription(presence.briefDescription || ""); setEditingBrief(false); }}
+              className="shrink-0 text-muted hover:text-white text-xs px-2 py-1.5 rounded-lg transition-colors"
+            >
+              <Icon icon="lucide:x" width={12} height={12} />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setEditingBrief(true)}
+            className="group flex items-center gap-2 text-left"
+          >
+            <span className="text-sm text-muted italic">
+              {briefDescription
+                ? `"${briefDescription}"`
+                : <span className="text-muted/40">Add a brief description…</span>}
+            </span>
+            <Icon
+              icon="lucide:pencil"
+              width={12}
+              height={12}
+              className="text-muted/30 group-hover:text-accent transition-colors shrink-0"
+            />
+          </button>
+        )}
+      </div>
 
       {/* Two-column layout */}
       <div className="flex gap-6 items-start">
@@ -417,44 +480,14 @@ export default function PresenceDetailPage() {
             rows={8}
           />
 
-          {/* Asset selector */}
-          <div className="bg-card border border-card-border rounded-xl p-5">
-            <h3 className="text-white font-semibold flex items-center gap-2 mb-1">
-              <Icon icon="lucide:image" width={16} height={16} className="text-accent" />
-              Asset
-            </h3>
-            <p className="text-xs text-muted mb-3">
-              Select an asset from the library to visually represent this presence. Physical attributes (body, clothing, etc.) are defined by the asset.
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={presence.assetName || ""}
-                readOnly
-                placeholder="No asset selected"
-                className="flex-1 bg-input border border-card-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:outline-none cursor-default"
-              />
-              <button
-                onClick={() => router.push("/assets")}
-                className="bg-white/[0.06] border border-card-border hover:border-accent/40 text-foreground text-sm font-medium px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2"
-              >
-                <Icon icon="lucide:library" width={14} height={14} />
-                Browse Assets
-              </button>
-            </div>
-          </div>
+        </div>
+
+        {/* ── Right sidebar ─────────────────────────────────────────────────── */}
+        <div className="flex-[2] min-w-0 space-y-3">
 
           {/* AI Assistant */}
-          <div className="bg-card border border-card-border rounded-xl overflow-hidden">
-            <button
-              onClick={() => {/* always visible, this is a card header only */}}
-              className="w-full flex items-center gap-2 p-5 pb-0 cursor-default"
-            >
-              <Icon icon="lucide:sparkles" width={16} height={16} className="text-accent" />
-              <span className="text-white font-semibold text-sm">AI Assistant</span>
-            </button>
-            <div className="p-5 pt-3 space-y-3">
-
+          <SidebarCard title="AI Assistant" icon="lucide:sparkles" defaultOpen>
+            <div className="space-y-3">
               {/* Target toggle */}
               <div className="flex rounded-lg overflow-hidden border border-card-border">
                 <button
@@ -497,8 +530,8 @@ export default function PresenceDetailPage() {
 
               <p className="text-xs text-muted">
                 {aiMode === "generate"
-                  ? `AI will generate a ${aiTarget} using the name and brief description as context.`
-                  : `AI will refine the existing ${aiTarget} based on your instructions.`}
+                  ? `Generate a ${aiTarget} from the name and brief description.`
+                  : `Refine the existing ${aiTarget} based on your instructions.`}
               </p>
 
               <textarea
@@ -509,7 +542,7 @@ export default function PresenceDetailPage() {
                     ? "e.g. Lean into the mystical side, make it feel ancient and otherworldly…"
                     : "e.g. Give them a tragic origin tied to a lost civilization. Keep it mysterious."
                 }
-                rows={4}
+                rows={3}
                 className="w-full bg-input border border-card-border rounded-xl px-3 py-2.5 text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-accent/50 resize-none"
               />
 
@@ -534,11 +567,30 @@ export default function PresenceDetailPage() {
                 )}
               </button>
             </div>
-          </div>
-        </div>
+          </SidebarCard>
 
-        {/* ── Right sidebar ─────────────────────────────────────────────────── */}
-        <div className="flex-[2] min-w-0 space-y-3">
+          {/* Asset */}
+          <SidebarCard title="Asset" icon="lucide:image">
+            <p className="text-xs text-muted mb-3">
+              Select an asset to visually represent this presence. Physical attributes come from the asset.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={presence.assetName || ""}
+                readOnly
+                placeholder="No asset selected"
+                className="flex-1 bg-input border border-card-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted focus:outline-none cursor-default min-w-0"
+              />
+              <button
+                onClick={() => router.push("/assets")}
+                className="shrink-0 bg-white/[0.06] border border-card-border hover:border-accent/40 text-foreground text-xs font-medium px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5"
+              >
+                <Icon icon="lucide:library" width={13} height={13} />
+                Browse
+              </button>
+            </div>
+          </SidebarCard>
 
           {/* Knowledge Bases */}
           <SidebarCard title="Knowledge Bases" icon="lucide:brain" defaultOpen>
