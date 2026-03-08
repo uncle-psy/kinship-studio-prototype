@@ -36,9 +36,12 @@ export default function PromptDetailPage() {
 
   const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const originalContentRef = useRef("");
 
   // Editor fields (local state, synced on save)
   const [name, setName] = useState("");
@@ -76,7 +79,10 @@ export default function PromptDetailPage() {
         const data: Prompt = await res.json();
         setPrompt(data);
         setName(data.name);
-        setContent(data.content || "");
+        const c = data.content || "";
+        setContent(c);
+        // Start in edit mode if there's no content yet
+        if (!c) setIsEditing(true);
         setTone(data.tone || "");
         setPersona(data.persona || "");
         setAudience(data.audience || "");
@@ -132,12 +138,25 @@ export default function PromptDetailPage() {
         const updated = await res.json();
         setPrompt(updated);
         setLastSaved(new Date());
+        setIsEditing(false);
+        setSavedFlash(true);
+        setTimeout(() => setSavedFlash(false), 2500);
       }
     } catch (err) {
       console.error("Save failed:", err);
     } finally {
       setSaving(false);
     }
+  }
+
+  function startEditing() {
+    originalContentRef.current = content;
+    setIsEditing(true);
+  }
+
+  function handleCancel() {
+    setContent(originalContentRef.current);
+    setIsEditing(false);
   }
 
   async function handleSaveName() {
@@ -209,6 +228,9 @@ export default function PromptDetailPage() {
         setContent(data.content);
         setPrompt(data.prompt);
         setLastSaved(new Date());
+        setIsEditing(false);
+        setSavedFlash(true);
+        setTimeout(() => setSavedFlash(false), 2500);
         setAiInstructions("");
       } else {
         const data = await res.json();
@@ -234,7 +256,9 @@ export default function PromptDetailPage() {
       });
       if (res.ok) {
         const data = await res.json();
+        originalContentRef.current = content;
         setContent(data.content);
+        setIsEditing(true);
         setActivePanel(null);
       } else {
         const data = await res.json();
@@ -307,8 +331,11 @@ export default function PromptDetailPage() {
               <Icon icon="lucide:pencil" width={18} height={18} className="text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
             </button>
           )}
-          <p className="text-muted mt-1 text-sm">
-            {lastSaved
+          <p className={`mt-1 text-sm flex items-center gap-1.5 transition-colors ${savedFlash ? "text-green-400" : "text-muted"}`}>
+            {savedFlash && <Icon icon="lucide:check-circle" width={14} height={14} />}
+            {savedFlash
+              ? "Saved!"
+              : lastSaved
               ? `Saved ${lastSaved.toLocaleTimeString()}`
               : `Created ${new Date(prompt.createdAt).toLocaleDateString()}`}
           </p>
@@ -331,11 +358,14 @@ export default function PromptDetailPage() {
       <div className="flex gap-6">
         {/* Left: Prompt editor */}
         <div className="flex-1 min-w-0">
-          <div className="bg-card border border-card-border rounded-xl p-5 mb-4">
+          <div className={`border rounded-xl p-5 mb-4 transition-colors ${isEditing ? "bg-card border-accent/40" : "bg-card border-card-border"}`}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-white font-semibold flex items-center gap-2">
                 <Icon icon="lucide:file-text" width={18} height={18} className="text-accent" />
                 Prompt Content
+                {isEditing && (
+                  <span className="text-xs font-normal text-accent/70 bg-accent/10 px-2 py-0.5 rounded-full">Editing</span>
+                )}
               </h3>
               {content && (
                 <span className="text-xs text-muted">{content.length} chars</span>
@@ -344,37 +374,60 @@ export default function PromptDetailPage() {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              readOnly={!isEditing}
               placeholder="Paste, type, or generate your prompt here…"
               rows={18}
-              className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50 resize-y font-mono text-sm leading-relaxed"
+              className={`w-full rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none font-mono text-sm leading-relaxed transition-colors ${
+                isEditing
+                  ? "bg-input border border-accent/30 focus:border-accent/60 resize-y cursor-text"
+                  : "bg-transparent border border-transparent cursor-default resize-none select-text"
+              }`}
             />
           </div>
 
-          {/* Save + import row */}
+          {/* Action row */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-2.5 rounded-full transition-colors flex items-center gap-2 disabled:opacity-60"
-            >
-              {saving ? (
-                <Icon icon="lucide:loader-2" width={16} height={16} className="animate-spin" />
-              ) : (
-                <Icon icon="lucide:save" width={16} height={16} />
-              )}
-              Save Prompt
-            </button>
-            <button
-              onClick={() => setActivePanel(activePanel === "import" ? null : "import")}
-              className={`border font-medium px-4 py-2.5 rounded-full transition-colors flex items-center gap-2 text-sm ${
-                activePanel === "import"
-                  ? "bg-accent/10 border-accent/50 text-accent"
-                  : "bg-card border-card-border text-foreground hover:border-accent/40"
-              }`}
-            >
-              <Icon icon="lucide:upload" width={16} height={16} />
-              Import File
-            </button>
+            {isEditing ? (
+              <>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-2.5 rounded-full transition-colors flex items-center gap-2 disabled:opacity-60"
+                >
+                  {saving ? (
+                    <Icon icon="lucide:loader-2" width={16} height={16} className="animate-spin" />
+                  ) : (
+                    <Icon icon="lucide:save" width={16} height={16} />
+                  )}
+                  Save Prompt
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="border border-card-border text-foreground/70 hover:text-foreground hover:border-accent/40 font-medium px-4 py-2.5 rounded-full transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => setActivePanel(activePanel === "import" ? null : "import")}
+                  className={`border font-medium px-4 py-2.5 rounded-full transition-colors flex items-center gap-2 text-sm ml-auto ${
+                    activePanel === "import"
+                      ? "bg-accent/10 border-accent/50 text-accent"
+                      : "bg-card border-card-border text-foreground hover:border-accent/40"
+                  }`}
+                >
+                  <Icon icon="lucide:upload" width={16} height={16} />
+                  Import File
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={startEditing}
+                className="bg-card border border-card-border hover:border-accent/50 text-foreground font-semibold px-6 py-2.5 rounded-full transition-colors flex items-center gap-2"
+              >
+                <Icon icon="lucide:pencil" width={16} height={16} />
+                Edit Prompt
+              </button>
+            )}
           </div>
 
           {/* Import panel */}

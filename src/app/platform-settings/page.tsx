@@ -1,7 +1,7 @@
 export default function PlatformSettingsPage() {
   const settings = [
-    { label: "Platform Name", value: "sample-platform" },
-    { label: "Slug", value: "sample-platform" },
+    { label: "Platform Name", value: "Kinship Today" },
+    { label: "Slug", value: "kinship-today" },
     { label: "Description", value: "—" },
     { label: "Icon", value: "🎮", isIcon: true },
     { label: "Color", value: "#4CADA8", isColor: true },
@@ -15,7 +15,7 @@ export default function PlatformSettingsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white">Platform Settings</h1>
-        <p className="text-muted mt-1">Configuration for sample-platform</p>
+        <p className="text-muted mt-1">Configuration for Kinship Today</p>
       </div>
 
       {/* Settings table */}

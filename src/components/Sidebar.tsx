@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
@@ -29,8 +30,11 @@ const navSections = [
   },
 ];
 
+const projects = ["Mapshifting"];
+
 export function Sidebar() {
   const pathname = usePathname();
+  const [projectsOpen, setProjectsOpen] = useState(true);
 
   return (
     <aside className="fixed left-0 top-[60px] w-[220px] h-[calc(100vh-60px)] bg-sidebar border-r border-card-border overflow-y-auto py-4 px-3">
@@ -41,8 +45,35 @@ export function Sidebar() {
         </div>
         <div className="px-3 py-1.5 text-accent text-sm flex items-center gap-2">
           <Icon icon="lucide:layers" width={16} height={16} className="text-accent" />
-          sample-platform
+          Kinship Today
         </div>
+      </div>
+
+      {/* Projects */}
+      <div className="mb-4">
+        <button
+          onClick={() => setProjectsOpen((o) => !o)}
+          className="w-full flex items-center justify-between text-[10px] font-semibold text-white/40 uppercase tracking-wider px-3 mb-1 hover:text-white/60 transition-colors"
+        >
+          <span>Projects</span>
+          <Icon
+            icon={projectsOpen ? "lucide:chevron-down" : "lucide:chevron-right"}
+            width={12}
+            height={12}
+          />
+        </button>
+        {projectsOpen && (
+          <ul className="space-y-0.5">
+            {projects.map((name) => (
+              <li key={name}>
+                <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer">
+                  <Icon icon="lucide:folder" width={18} height={18} className="text-white" />
+                  <span className="flex-1">{name}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Nav sections */}
