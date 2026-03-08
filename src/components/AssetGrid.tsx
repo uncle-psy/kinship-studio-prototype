@@ -24,7 +24,7 @@ export function AssetGrid() {
           className="bg-card border border-card-border rounded-xl overflow-hidden hover:border-accent/40 transition-colors cursor-pointer group"
         >
           {/* Asset preview */}
-          <div className="h-40 bg-background/50 flex items-center justify-center">
+          <div className="h-40 bg-white/[0.04] flex items-center justify-center">
             <div
               className="w-20 h-20 rounded-lg opacity-80 group-hover:opacity-100 transition-opacity"
               style={{
@@ -47,7 +47,7 @@ export function AssetGrid() {
                 {asset.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[10px] text-muted bg-background/50 px-1.5 py-0.5 rounded"
+                    className="text-[10px] text-white/50 bg-white/[0.06] px-1.5 py-0.5 rounded"
                   >
                     {tag}
                   </span>

@@ -6,7 +6,7 @@ export default function GamesPage() {
           <h1 className="text-3xl font-bold text-white">Games</h1>
           <p className="text-muted mt-1">1 game in sample-platform</p>
         </div>
-        <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-5 py-2.5 rounded-full transition-colors">
+        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-lg transition-colors">
           + New Game
         </button>
       </div>
@@ -27,13 +27,13 @@ export default function GamesPage() {
           </div>
 
           <div className="flex gap-4 mb-4">
-            <div className="bg-background/50 border border-card-border rounded-lg px-4 py-3 text-center flex-1">
+            <div className="bg-white/[0.06] border border-card-border rounded-lg px-4 py-3 text-center flex-1">
               <div className="text-2xl font-bold text-white">0</div>
-              <div className="text-xs text-muted">Scenes</div>
+              <div className="text-xs text-white/50">Scenes</div>
             </div>
-            <div className="bg-background/50 border border-card-border rounded-lg px-4 py-3 text-center flex-1">
+            <div className="bg-white/[0.06] border border-card-border rounded-lg px-4 py-3 text-center flex-1">
               <div className="text-2xl font-bold text-white">0</div>
-              <div className="text-xs text-muted">Quests</div>
+              <div className="text-xs text-white/50">Quests</div>
             </div>
           </div>
 

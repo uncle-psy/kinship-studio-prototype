@@ -8,7 +8,7 @@ export default function AssetsPage() {
           <h1 className="text-3xl font-bold text-white">Assets</h1>
           <p className="text-muted mt-1">Manage game assets and sprites</p>
         </div>
-        <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-5 py-2.5 rounded-full transition-colors">
+        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-full transition-colors">
           + Upload Asset
         </button>
       </div>

@@ -23,7 +23,7 @@ export default function KnowledgePage() {
           <button className="bg-card border border-card-border hover:border-accent/50 text-foreground font-medium px-4 py-2.5 rounded-full transition-colors flex items-center gap-2">
             📄 Upload PDF
           </button>
-          <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-5 py-2.5 rounded-full transition-colors">
+          <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-full transition-colors">
             + New Document
           </button>
         </div>
@@ -53,7 +53,7 @@ export default function KnowledgePage() {
             onClick={() => setSelectedCategory(cat)}
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
               selectedCategory === cat
-                ? "bg-accent text-black font-medium"
+                ? "bg-accent text-white font-medium"
                 : "bg-card border border-card-border text-foreground/80 hover:border-accent/50"
             }`}
           >
@@ -71,7 +71,7 @@ export default function KnowledgePage() {
             onClick={() => setSelectedStatus(status)}
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
               selectedStatus === status
-                ? "bg-accent text-black font-medium"
+                ? "bg-accent text-white font-medium"
                 : "bg-card border border-card-border text-foreground/80 hover:border-accent/50"
             }`}
           >
@@ -85,7 +85,7 @@ export default function KnowledgePage() {
         <div className="text-6xl mb-4">📚</div>
         <h3 className="text-xl font-semibold text-white mb-2">No documents found</h3>
         <p className="text-muted mb-6">Add knowledge documents to provide context for AI interactions.</p>
-        <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-6 py-3 rounded-full transition-colors">
+        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-3 rounded-full transition-colors">
           + Create Document
         </button>
       </div>

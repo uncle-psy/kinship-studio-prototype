@@ -35,7 +35,7 @@ export function Sidebar() {
     <aside className="fixed left-0 top-[60px] w-[220px] h-[calc(100vh-60px)] bg-sidebar border-r border-card-border overflow-y-auto py-4 px-3">
       {/* Platform */}
       <div className="mb-4">
-        <div className="text-[10px] font-semibold text-muted uppercase tracking-wider px-3 mb-1">
+        <div className="text-[10px] font-semibold text-white/40 uppercase tracking-wider px-3 mb-1">
           Platform
         </div>
         <div className="px-3 py-1.5 text-accent text-sm">
@@ -46,7 +46,7 @@ export function Sidebar() {
       {/* Nav sections */}
       {navSections.map((section) => (
         <div key={section.label} className="mb-4">
-          <div className="text-[10px] font-semibold text-muted uppercase tracking-wider px-3 mb-1">
+          <div className="text-[10px] font-semibold text-white/40 uppercase tracking-wider px-3 mb-1">
             {section.label}
           </div>
           <ul className="space-y-0.5">
@@ -63,7 +63,7 @@ export function Sidebar() {
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
                         ? "bg-accent/20 text-accent"
-                        : "text-foreground/80 hover:bg-card hover:text-white"
+                        : "text-white/70 hover:bg-white/[0.06] hover:text-white"
                     }`}
                   >
                     <span className="text-base">{item.icon}</span>
@@ -74,7 +74,7 @@ export function Sidebar() {
                       </span>
                     )}
                     {item.tag && (
-                      <span className="bg-accent text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
+                      <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
                         {item.tag}
                       </span>
                     )}
@@ -95,7 +95,7 @@ export function Sidebar() {
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 pathname === "/platform-settings"
                   ? "bg-accent/20 text-accent"
-                  : "text-foreground/80 hover:bg-card hover:text-white"
+                  : "text-white/70 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
               <span className="text-base">⚙️</span>

@@ -20,7 +20,7 @@ export default function PromptsPage() {
           <h1 className="text-3xl font-bold text-white">Prompts</h1>
           <p className="text-muted mt-1">0 prompts</p>
         </div>
-        <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-5 py-2.5 rounded-full transition-colors">
+        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-full transition-colors">
           + New Prompt
         </button>
       </div>
@@ -66,7 +66,7 @@ export default function PromptsPage() {
             onClick={() => setSelectedStatus(status)}
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
               selectedStatus === status
-                ? "bg-accent text-black font-medium"
+                ? "bg-accent text-white font-medium"
                 : "bg-card border border-card-border text-foreground/80 hover:border-accent/50"
             }`}
           >
@@ -80,7 +80,7 @@ export default function PromptsPage() {
         <div className="text-6xl mb-4">📝</div>
         <h3 className="text-xl font-semibold text-white mb-2">No prompts found</h3>
         <p className="text-muted mb-6">Create prompts to guide AI behavior in different contexts.</p>
-        <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-6 py-3 rounded-full transition-colors">
+        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-3 rounded-full transition-colors">
           + Create Prompt
         </button>
       </div>

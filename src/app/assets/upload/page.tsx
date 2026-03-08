@@ -15,7 +15,7 @@ export default function UploadAssetPage() {
           <h1 className="text-3xl font-bold text-white">Upload Asset</h1>
           <p className="text-muted mt-1">Add a new game asset with full metadata</p>
         </div>
-        <button className="bg-accent hover:bg-accent-dark text-black font-semibold px-5 py-2.5 rounded-full transition-colors flex items-center gap-2">
+        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-full transition-colors flex items-center gap-2">
           💾 Upload & Save
         </button>
       </div>
