@@ -3,11 +3,11 @@ export default function GamesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Games</h1>
-          <p className="text-muted mt-1">1 game in sample-platform</p>
+          <h1 className="text-3xl font-bold text-white">Experiences</h1>
+          <p className="text-muted mt-1">1 experience in sample-platform</p>
         </div>
         <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-lg transition-colors">
-          + New Game
+          + New Experience
         </button>
       </div>
 
@@ -45,7 +45,7 @@ export default function GamesPage() {
         {/* New Game Card */}
         <div className="border-2 border-dashed border-card-border rounded-xl p-5 flex flex-col items-center justify-center min-h-[200px] hover:border-accent/40 transition-colors cursor-pointer group">
           <div className="text-4xl text-muted group-hover:text-accent mb-2 transition-colors">+</div>
-          <div className="text-muted group-hover:text-accent transition-colors font-medium">New Game</div>
+          <div className="text-muted group-hover:text-accent transition-colors font-medium">New Experience</div>
         </div>
       </div>
     </div>

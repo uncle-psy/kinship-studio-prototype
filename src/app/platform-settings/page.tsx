@@ -6,8 +6,8 @@ export default function PlatformSettingsPage() {
     { label: "Icon", value: "🎮", isIcon: true },
     { label: "Color", value: "#4CADA8", isColor: true },
     { label: "Total Assets", value: "63" },
-    { label: "Total Games", value: "1" },
-    { label: "HEARTS Framework", value: "7 facets enabled" },
+    { label: "Total Experiences", value: "1" },
+    { label: "Signals Framework", value: "7 signals enabled" },
     { label: "Platform ID", value: "0a061698-f710-4e2f-901f-32f7f92..." },
   ];
 

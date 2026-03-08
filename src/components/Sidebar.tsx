@@ -2,28 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon } from "@iconify/react";
 
 const navSections = [
   {
     label: "Assets",
     items: [
-      { href: "/assets", icon: "🖼️", label: "Library", badge: "63" },
-      { href: "/assets/upload", icon: "📤", label: "Upload" },
-      { href: "/packs", icon: "📦", label: "Asset Packs", tag: "NEW" },
+      { href: "/assets", icon: "lucide:library", label: "Library", badge: "63" },
+      { href: "/assets/upload", icon: "lucide:upload-cloud", label: "Upload" },
+      { href: "/packs", icon: "lucide:package", label: "Asset Packs", tag: "NEW" },
     ],
   },
   {
     label: "AI & Knowledge",
     items: [
-      { href: "/knowledge", icon: "📚", label: "Knowledge" },
-      { href: "/prompts", icon: "🤖", label: "Prompts" },
-      { href: "/progress", icon: "❤️", label: "HEARTS" },
+      { href: "/knowledge", icon: "lucide:brain", label: "Knowledge" },
+      { href: "/prompts", icon: "lucide:message-square-code", label: "Prompts" },
+      { href: "/progress", icon: "lucide:activity", label: "Signals" },
     ],
   },
   {
-    label: "Games",
+    label: "Experiences",
     items: [
-      { href: "/games", icon: "🎮", label: "All Games" },
+      { href: "/games", icon: "lucide:compass", label: "Experiences" },
     ],
   },
 ];
@@ -38,8 +39,9 @@ export function Sidebar() {
         <div className="text-[10px] font-semibold text-white/40 uppercase tracking-wider px-3 mb-1">
           Platform
         </div>
-        <div className="px-3 py-1.5 text-accent text-sm">
-          🎮 sample-platform
+        <div className="px-3 py-1.5 text-accent text-sm flex items-center gap-2">
+          <Icon icon="lucide:layers" width={16} height={16} className="text-accent" />
+          sample-platform
         </div>
       </div>
 
@@ -66,7 +68,12 @@ export function Sidebar() {
                         : "text-white/70 hover:bg-white/[0.06] hover:text-white"
                     }`}
                   >
-                    <span className="text-base">{item.icon}</span>
+                    <Icon
+                      icon={item.icon}
+                      width={18}
+                      height={18}
+                      className={isActive ? "text-accent" : "text-white"}
+                    />
                     <span className="flex-1">{item.label}</span>
                     {item.badge && (
                       <span className="bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full">
@@ -98,7 +105,12 @@ export function Sidebar() {
                   : "text-white/70 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
-              <span className="text-base">⚙️</span>
+              <Icon
+                icon="lucide:settings"
+                width={18}
+                height={18}
+                className={pathname === "/platform-settings" ? "text-accent" : "text-white"}
+              />
               <span>Platform Settings</span>
             </Link>
           </li>

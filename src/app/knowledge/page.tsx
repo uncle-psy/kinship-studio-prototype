@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const categories = ["All", "HEARTS", "Scene", "NPC", "Sages", "Challenge", "General"];
+const categories = ["All", "Signals", "Scene", "NPC", "Sages", "Challenge", "General"];
 const statuses = ["All", "Draft", "Pending", "Ingested", "Failed"];
 
 export default function KnowledgePage() {

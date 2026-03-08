@@ -136,10 +136,10 @@ export default function UploadAssetPage() {
 
         {/* Right column - Metadata */}
         <div className="space-y-6">
-          {/* HEARTS Mapping */}
+          {/* Signals Mapping */}
           <div className="bg-card border border-card-border rounded-xl p-6">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              💚 HEARTS Mapping
+              💚 Signals Mapping
             </h2>
             <div className="space-y-4">
               <div>
