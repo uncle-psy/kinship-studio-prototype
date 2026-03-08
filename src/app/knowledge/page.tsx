@@ -1,94 +1,181 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Icon } from "@iconify/react";
+import { CreateKBModal } from "@/components/CreateKBModal";
 
-const categories = ["All", "Signals", "Scene", "NPC", "Sages", "Challenge", "General"];
-const statuses = ["All", "Draft", "Pending", "Ingested", "Failed"];
+interface KnowledgeBase {
+  id: string;
+  name: string;
+  namespace: string;
+  createdAt: string;
+  itemCount: number;
+}
 
 export default function KnowledgePage() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedStatus, setSelectedStatus] = useState("All");
+  const router = useRouter();
+  const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const fetchKBs = useCallback(async () => {
+    try {
+      const res = await fetch("/api/knowledge");
+      if (res.ok) {
+        const data = await res.json();
+        setKnowledgeBases(data.knowledgeBases);
+      }
+    } catch (err) {
+      console.error("Failed to fetch KBs:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchKBs();
+  }, [fetchKBs]);
+
+  const filtered = knowledgeBases.filter((kb) =>
+    kb.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div>
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Knowledge Base</h1>
-          <p className="text-muted mt-1">0 documents</p>
+          <h1 className="text-3xl font-bold text-white">Knowledge Bases</h1>
+          <p className="text-muted mt-1">
+            {knowledgeBases.length} knowledge base{knowledgeBases.length !== 1 ? "s" : ""}
+          </p>
         </div>
-        <div className="flex gap-3">
-          <button className="bg-card border border-card-border hover:border-accent/50 text-foreground font-medium px-4 py-2.5 rounded-full transition-colors flex items-center gap-2">
-            🔄 Ingest
-          </button>
-          <button className="bg-card border border-card-border hover:border-accent/50 text-foreground font-medium px-4 py-2.5 rounded-full transition-colors flex items-center gap-2">
-            📄 Upload PDF
-          </button>
-          <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-full transition-colors">
-            + New Document
-          </button>
-        </div>
+        <button
+          onClick={() => setShowCreate(true)}
+          className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2.5 rounded-full transition-colors flex items-center gap-2"
+        >
+          <Icon icon="lucide:plus" width={18} height={18} />
+          Create Knowledge Base
+        </button>
       </div>
 
       {/* Search */}
-      <div className="mb-4">
-        <div className="relative">
-          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search documents..."
-            className="w-full bg-input border border-card-border rounded-xl pl-10 pr-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
-          />
+      {knowledgeBases.length > 0 && (
+        <div className="mb-6">
+          <div className="relative">
+            <Icon
+              icon="lucide:search"
+              width={16}
+              height={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search knowledge bases..."
+              className="w-full bg-input border border-card-border rounded-xl pl-10 pr-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Category filter */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-sm text-muted mr-1">Category:</span>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              selectedCategory === cat
-                ? "bg-accent text-white font-medium"
-                : "bg-card border border-card-border text-foreground/80 hover:border-accent/50"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+      {/* Loading */}
+      {loading && (
+        <div className="text-center py-16">
+          <Icon
+            icon="lucide:loader-2"
+            width={40}
+            height={40}
+            className="mx-auto mb-3 text-muted animate-spin"
+          />
+          <p className="text-muted">Loading knowledge bases...</p>
+        </div>
+      )}
 
-      {/* Status filter */}
-      <div className="flex items-center gap-2 mb-8">
-        <span className="text-sm text-muted mr-1">Status:</span>
-        {statuses.map((status) => (
-          <button
-            key={status}
-            onClick={() => setSelectedStatus(status)}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              selectedStatus === status
-                ? "bg-accent text-white font-medium"
-                : "bg-card border border-card-border text-foreground/80 hover:border-accent/50"
-            }`}
-          >
-            {status}
-          </button>
-        ))}
-      </div>
+      {/* KB Grid */}
+      {!loading && filtered.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((kb) => (
+            <button
+              key={kb.id}
+              onClick={() => router.push(`/knowledge/${kb.id}`)}
+              className="bg-card border border-card-border rounded-xl p-5 text-left hover:border-accent/50 transition-all hover:bg-white/[0.04] group"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 rounded-lg bg-accent/15 flex items-center justify-center">
+                  <Icon
+                    icon="lucide:brain"
+                    width={20}
+                    height={20}
+                    className="text-accent"
+                  />
+                </div>
+                <Icon
+                  icon="lucide:chevron-right"
+                  width={18}
+                  height={18}
+                  className="text-muted group-hover:text-accent transition-colors mt-1"
+                />
+              </div>
+              <h3 className="text-white font-semibold text-lg mb-1 truncate">
+                {kb.name}
+              </h3>
+              <div className="flex items-center gap-4 text-sm text-muted">
+                <span className="flex items-center gap-1">
+                  <Icon icon="lucide:file-text" width={14} height={14} />
+                  {kb.itemCount} item{kb.itemCount !== 1 ? "s" : ""}
+                </span>
+                <span>
+                  {new Date(kb.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Empty state */}
-      <div className="text-center py-16">
-        <div className="text-6xl mb-4">📚</div>
-        <h3 className="text-xl font-semibold text-white mb-2">No documents found</h3>
-        <p className="text-muted mb-6">Add knowledge documents to provide context for AI interactions.</p>
-        <button className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-3 rounded-full transition-colors">
-          + Create Document
-        </button>
-      </div>
+      {!loading && knowledgeBases.length === 0 && (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 rounded-2xl bg-accent/15 flex items-center justify-center mx-auto mb-4">
+            <Icon icon="lucide:brain" width={32} height={32} className="text-accent" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">
+            No knowledge bases yet
+          </h3>
+          <p className="text-muted mb-6 max-w-md mx-auto">
+            Create a knowledge base to store documents, files, and AI-generated
+            content for your AI interactions.
+          </p>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-3 rounded-full transition-colors"
+          >
+            + Create Knowledge Base
+          </button>
+        </div>
+      )}
+
+      {/* No search results */}
+      {!loading && knowledgeBases.length > 0 && filtered.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-muted">No knowledge bases match &ldquo;{search}&rdquo;</p>
+        </div>
+      )}
+
+      {/* Create modal */}
+      {showCreate && (
+        <CreateKBModal
+          onClose={() => setShowCreate(false)}
+          onCreate={(kb) => {
+            setShowCreate(false);
+            router.push(`/knowledge/${kb.id}`);
+          }}
+        />
+      )}
     </div>
   );
 }
