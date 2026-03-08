@@ -15,8 +15,9 @@ const navSections = [
     ],
   },
   {
-    label: "AI & Knowledge",
+    label: "Actors",
     items: [
+      { href: "/presence", icon: "lucide:user-round", label: "Presence" },
       { href: "/knowledge", icon: "lucide:brain", label: "Knowledge" },
       { href: "/prompts", icon: "lucide:message-square-code", label: "Prompts" },
       { href: "/progress", icon: "lucide:activity", label: "Signals" },

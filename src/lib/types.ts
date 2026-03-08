@@ -32,6 +32,32 @@ export interface Prompt {
   updatedAt: string;
 }
 
+export interface PresenceSignal {
+  signalId: string;
+  name: string;
+  letter: string;
+  color: string;
+  value: number; // 0–100
+}
+
+export interface Presence {
+  id: string;
+  name: string;
+  physicalDescription: string;
+  bodyType?: string;
+  clothingStyle?: string;
+  hairStyle?: string;
+  skinTone?: string;
+  accessories?: string;
+  knowledgeBaseIds: string[];
+  knowledgeBaseNames: string[];
+  promptId?: string;
+  promptName?: string;
+  signals: PresenceSignal[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PineconeVector {
   id: string;
   values: number[];
