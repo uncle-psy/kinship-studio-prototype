@@ -7,10 +7,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { name } = await request.json();
+  const { name, briefDescription } = await request.json();
   if (!name?.trim()) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
   }
-  const presence = await createPresence(name.trim());
+  const presence = await createPresence(name.trim(), (briefDescription ?? "").trim());
   return NextResponse.json({ presence }, { status: 201 });
 }

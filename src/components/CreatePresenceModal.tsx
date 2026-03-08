@@ -11,6 +11,7 @@ interface Props {
 
 export function CreatePresenceModal({ onClose, onCreate }: Props) {
   const [name, setName] = useState("");
+  const [briefDescription, setBriefDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,7 +24,7 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
       const res = await fetch("/api/presence", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify({ name: name.trim(), briefDescription: briefDescription.trim() }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -54,10 +55,7 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
               <p className="text-xs text-muted">Create a new actor / being</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-muted hover:text-white transition-colors p-1"
-          >
+          <button onClick={onClose} className="text-muted hover:text-white transition-colors p-1">
             <Icon icon="lucide:x" width={20} height={20} />
           </button>
         </div>
@@ -71,9 +69,23 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. The Wandering Scholar"
+              placeholder="e.g. The Wandering Scholar, Shadow Fox, The Tide…"
               autoFocus
               className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Brief Description
+              <span className="text-muted font-normal ml-1">(optional — helps AI understand what this being is)</span>
+            </label>
+            <textarea
+              value={briefDescription}
+              onChange={(e) => setBriefDescription(e.target.value)}
+              placeholder="e.g. A cunning arctic fox spirit who guides lost travellers. Or: a swirling dust storm with a mischievous personality."
+              rows={3}
+              className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50 text-sm resize-none"
             />
           </div>
 

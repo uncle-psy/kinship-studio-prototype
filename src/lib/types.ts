@@ -43,12 +43,11 @@ export interface PresenceSignal {
 export interface Presence {
   id: string;
   name: string;
-  physicalDescription: string;
-  bodyType?: string;
-  clothingStyle?: string;
-  hairStyle?: string;
-  skinTone?: string;
-  accessories?: string;
+  briefDescription: string;  // seed from creation
+  description: string;       // AI-generated / edited full description
+  backstory: string;         // AI-generated / edited backstory
+  assetId?: string;
+  assetName?: string;
   knowledgeBaseIds: string[];
   knowledgeBaseNames: string[];
   promptId?: string;

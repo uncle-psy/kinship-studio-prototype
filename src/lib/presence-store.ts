@@ -109,7 +109,7 @@ export async function getPresence(id: string): Promise<Presence | null> {
   return kv.get<Presence>(`presence:${id}`);
 }
 
-export async function createPresence(name: string): Promise<Presence> {
+export async function createPresence(name: string, briefDescription = ""): Promise<Presence> {
   const kv = getStore();
   const { nanoid } = await import("nanoid");
   const id = `presence_${nanoid(8)}`;
@@ -118,7 +118,9 @@ export async function createPresence(name: string): Promise<Presence> {
   const presence: Presence = {
     id,
     name,
-    physicalDescription: "",
+    briefDescription,
+    description: "",
+    backstory: "",
     knowledgeBaseIds: [],
     knowledgeBaseNames: [],
     signals: [],

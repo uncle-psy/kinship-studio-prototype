@@ -33,7 +33,8 @@ export default function PresencePage() {
 
   const filtered = presences.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
-    (p.physicalDescription && p.physicalDescription.toLowerCase().includes(search.toLowerCase()))
+    (p.briefDescription && p.briefDescription.toLowerCase().includes(search.toLowerCase())) ||
+    (p.description && p.description.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -112,24 +113,18 @@ export default function PresencePage() {
 
               <h3 className="text-white font-semibold text-lg mb-1 truncate">{presence.name}</h3>
 
-              {presence.physicalDescription ? (
-                <p className="text-sm text-muted line-clamp-2 mb-3">{presence.physicalDescription}</p>
+              {presence.briefDescription ? (
+                <p className="text-sm text-muted/70 italic line-clamp-1 mb-1">&ldquo;{presence.briefDescription}&rdquo;</p>
+              ) : null}
+
+              {presence.description ? (
+                <p className="text-sm text-muted line-clamp-2 mb-3">{presence.description}</p>
               ) : (
                 <p className="text-sm text-muted/50 italic mb-3">No description yet</p>
               )}
 
               {/* Chips */}
               <div className="flex flex-wrap items-center gap-1.5">
-                {presence.bodyType && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent/80">
-                    {presence.bodyType}
-                  </span>
-                )}
-                {presence.clothingStyle && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-white/[0.06] text-muted">
-                    {presence.clothingStyle}
-                  </span>
-                )}
                 {presence.knowledgeBaseIds.length > 0 && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-white/[0.06] text-muted flex items-center gap-1">
                     <Icon icon="lucide:brain" width={10} height={10} />

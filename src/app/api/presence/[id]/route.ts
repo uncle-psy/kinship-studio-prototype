@@ -22,12 +22,11 @@ export async function PUT(
 
   const allowed = [
     "name",
-    "physicalDescription",
-    "bodyType",
-    "clothingStyle",
-    "hairStyle",
-    "skinTone",
-    "accessories",
+    "briefDescription",
+    "description",
+    "backstory",
+    "assetId",
+    "assetName",
     "knowledgeBaseIds",
     "knowledgeBaseNames",
     "promptId",
