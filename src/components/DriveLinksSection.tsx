@@ -71,7 +71,7 @@ export function DriveLinksSection({
 
       <p className="text-xs text-muted mt-2 mb-3">
         <Icon icon="lucide:info" width={12} height={12} className="inline mr-1" />
-        Content sync from Google Drive coming soon. Links are saved for reference.
+        Add a link to a shared file or folder, then click <strong className="text-foreground">Ingest</strong> on the item below to fetch and embed the content. Files must be shared publicly or with link access.
       </p>
 
       {error && <p className="text-red-400 text-sm mb-3">{error}</p>}

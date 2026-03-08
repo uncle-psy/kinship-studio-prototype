@@ -33,6 +33,8 @@ const typeLabels: Record<string, string> = {
 
 export function KBItemsList({ kbId, items, onItemRemoved }: KBItemsListProps) {
   const [removing, setRemoving] = useState<string | null>(null);
+  const [ingesting, setIngesting] = useState<string | null>(null);
+  const [ingestError, setIngestError] = useState<string | null>(null);
 
   async function handleRemove(itemId: string) {
     setRemoving(itemId);
@@ -48,6 +50,27 @@ export function KBItemsList({ kbId, items, onItemRemoved }: KBItemsListProps) {
       console.error("Remove failed:", err);
     } finally {
       setRemoving(null);
+    }
+  }
+
+  async function handleIngest(itemId: string) {
+    setIngesting(itemId);
+    setIngestError(null);
+    try {
+      const res = await fetch(
+        `/api/knowledge/${kbId}/items/${itemId}/ingest`,
+        { method: "POST" }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setIngestError(data.error || "Ingestion failed");
+      }
+      onItemRemoved(); // Refresh the items list
+    } catch (err) {
+      console.error("Ingest failed:", err);
+      setIngestError("Network error during ingestion");
+    } finally {
+      setIngesting(null);
     }
   }
 
@@ -67,6 +90,19 @@ export function KBItemsList({ kbId, items, onItemRemoved }: KBItemsListProps) {
 
   return (
     <div className="space-y-2">
+      {ingestError && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-400 flex items-center gap-2">
+          <Icon icon="lucide:alert-circle" width={16} height={16} />
+          {ingestError}
+          <button
+            onClick={() => setIngestError(null)}
+            className="ml-auto text-red-400 hover:text-red-300"
+          >
+            <Icon icon="lucide:x" width={14} height={14} />
+          </button>
+        </div>
+      )}
+
       {items.map((item) => (
         <div
           key={item.id}
@@ -120,6 +156,47 @@ export function KBItemsList({ kbId, items, onItemRemoved }: KBItemsListProps) {
               </span>
             </div>
           </div>
+
+          {/* Ingest button for drive links that are pending or failed */}
+          {item.type === "drive-link" &&
+            (item.status === "pending" || item.status === "failed") && (
+              <button
+                onClick={() => handleIngest(item.id)}
+                disabled={ingesting === item.id}
+                className="bg-accent hover:bg-accent-dark text-white text-xs font-medium px-3 py-1.5 rounded-full transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0"
+                title="Fetch and ingest content from Google Drive"
+              >
+                {ingesting === item.id ? (
+                  <>
+                    <Icon
+                      icon="lucide:loader-2"
+                      width={13}
+                      height={13}
+                      className="animate-spin"
+                    />
+                    Ingesting...
+                  </>
+                ) : (
+                  <>
+                    <Icon icon="lucide:download" width={13} height={13} />
+                    Ingest
+                  </>
+                )}
+              </button>
+            )}
+
+          {/* Processing indicator for drive links being ingested */}
+          {item.type === "drive-link" && item.status === "processing" && (
+            <span className="text-xs text-yellow-500 flex items-center gap-1.5 shrink-0">
+              <Icon
+                icon="lucide:loader-2"
+                width={13}
+                height={13}
+                className="animate-spin"
+              />
+              Ingesting...
+            </span>
+          )}
 
           {/* URL for drive links */}
           {item.url && (
