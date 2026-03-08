@@ -17,6 +17,21 @@ export interface KBItem {
   chunkCount?: number;
 }
 
+export interface Prompt {
+  id: string;
+  name: string;
+  content: string;
+  tone?: string;
+  persona?: string;
+  audience?: string;
+  format?: string;
+  goal?: string;
+  connectedKBId?: string;
+  connectedKBName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PineconeVector {
   id: string;
   values: number[];
