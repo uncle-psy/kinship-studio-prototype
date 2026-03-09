@@ -67,10 +67,10 @@ const INITIAL_APPROVALS = [
   { id: "a7", type: "actor",          typeLabel: "Actor",          name: "The Cartographer",            submittedBy: "Jordan Kim",     date: "Mar 1, 2026",  status: "approved" },
 ];
 
-const INITIAL_PROJECTS = [
-  { id: "p1", name: "Mapshifting",          description: "Interactive map-based exploration game",  visibility: "private" as const,  owner: "Jordan Kim",     createdAt: "Jan 2024" },
-  { id: "p2", name: "Ocean Explorers",      description: "Deep sea adventure with marine biology",  visibility: "pending" as const,  owner: "Maya Rodriguez", createdAt: "Feb 2026" },
-  { id: "p3", name: "Time Travelers Guild", description: "Collaborative history exploration",        visibility: "public"  as const,  owner: "Alex Chen",      createdAt: "Nov 2024" },
+const INITIAL_PROJECTS: Project[] = [
+  { id: "p1", name: "Mapshifting",          description: "Interactive map-based exploration game", visibility: "private", owner: "Jordan Kim",     createdAt: "Jan 2024" },
+  { id: "p2", name: "Ocean Explorers",      description: "Deep sea adventure with marine biology", visibility: "pending", owner: "Maya Rodriguez", createdAt: "Feb 2026" },
+  { id: "p3", name: "Time Travelers Guild", description: "Collaborative history exploration",       visibility: "public",  owner: "Alex Chen",      createdAt: "Nov 2024" },
 ];
 
 const TYPE_COLORS: Record<string, string> = {
@@ -93,6 +93,15 @@ const HANDLE_MAX = 50;
 
 type Tab        = "overview" | "theme" | "signals" | "presence" | "users" | "approvals" | "projects" | "danger";
 type Visibility = "secret" | "private" | "pending" | "public";
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  visibility: Visibility;
+  owner: string;
+  createdAt: string;
+}
 
 const TABS: { id: Tab; label: string; icon: string; danger?: boolean }[] = [
   { id: "overview",  label: "Overview",    icon: "lucide:layout-dashboard" },
@@ -200,7 +209,7 @@ export default function PlatformSettingsPage() {
   const [approvalTypeFilter, setApprovalTypeFilter] = useState("all");
 
   // ── Projects ──
-  const [projects, setProjects] = useState(INITIAL_PROJECTS);
+  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
 
   const flashTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
