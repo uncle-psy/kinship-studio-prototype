@@ -4,6 +4,24 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import type { Presence } from "@/lib/types";
 
+const HANDLE_RE = /^[a-zA-Z0-9_.]*$/;
+const HANDLE_MAX = 25;
+
+function suggestHandle(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9_.]/g, "")
+    .slice(0, HANDLE_MAX);
+}
+
+function handleError(h: string): string | null {
+  if (!h) return null;
+  if (!HANDLE_RE.test(h)) return "Only letters, numbers, underscores, and periods allowed";
+  if (h.length > HANDLE_MAX) return `Max ${HANDLE_MAX} characters`;
+  return null;
+}
+
 interface Props {
   onClose: () => void;
   onCreate: (presence: Presence) => void;
@@ -11,20 +29,44 @@ interface Props {
 
 export function CreatePresenceModal({ onClose, onCreate }: Props) {
   const [name, setName] = useState("");
+  const [handle, setHandle] = useState("");
+  const [handleTouched, setHandleTouched] = useState(false);
   const [briefDescription, setBriefDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  function onNameChange(val: string) {
+    setName(val);
+    // Auto-fill handle from name if user hasn't manually edited it
+    if (!handleTouched) {
+      setHandle(suggestHandle(val));
+    }
+  }
+
+  function onHandleChange(val: string) {
+    // Strip disallowed chars in real time (spaces, emoji, special chars)
+    const cleaned = val.replace(/[^a-zA-Z0-9_.]/g, "").slice(0, HANDLE_MAX);
+    setHandle(cleaned);
+    setHandleTouched(true);
+  }
+
+  const inlineHandleError = handleTouched ? handleError(handle) : null;
+  const canSubmit = name.trim() && handle.trim() && !handleError(handle) && !loading;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!canSubmit) return;
     setLoading(true);
     setError("");
     try {
       const res = await fetch("/api/presence", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), briefDescription: briefDescription.trim() }),
+        body: JSON.stringify({
+          name: name.trim(),
+          handle: handle.trim(),
+          briefDescription: briefDescription.trim(),
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -61,6 +103,7 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
               Presence Name
@@ -68,17 +111,53 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => onNameChange(e.target.value)}
               placeholder="e.g. The Wandering Scholar, Shadow Fox, The Tide…"
               autoFocus
               className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
             />
           </div>
 
+          {/* Handle */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Handle
+              <span className="text-muted font-normal ml-1">(unique · letters, numbers, _ and . · max 25)</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-sm select-none">@</span>
+              <input
+                type="text"
+                value={handle}
+                onChange={(e) => onHandleChange(e.target.value)}
+                onBlur={() => setHandleTouched(true)}
+                placeholder="wandering_scholar"
+                maxLength={HANDLE_MAX}
+                className={`w-full bg-input border rounded-xl pl-8 pr-14 py-3 text-foreground placeholder:text-muted focus:outline-none transition-colors ${
+                  inlineHandleError
+                    ? "border-red-500/50 focus:border-red-500/70"
+                    : "border-card-border focus:border-accent/50"
+                }`}
+              />
+              <span className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs tabular-nums ${
+                handle.length >= HANDLE_MAX ? "text-red-400" : "text-muted"
+              }`}>
+                {handle.length}/{HANDLE_MAX}
+              </span>
+            </div>
+            {inlineHandleError && (
+              <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                <Icon icon="lucide:alert-circle" width={12} height={12} />
+                {inlineHandleError}
+              </p>
+            )}
+          </div>
+
+          {/* Brief Description */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
               Brief Description
-              <span className="text-muted font-normal ml-1">(optional — helps AI understand what this being is)</span>
+              <span className="text-muted font-normal ml-1">(optional)</span>
             </label>
             <textarea
               value={briefDescription}
@@ -106,7 +185,7 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
             </button>
             <button
               type="submit"
-              disabled={!name.trim() || loading}
+              disabled={!canSubmit}
               className="flex-1 bg-accent hover:bg-accent-dark disabled:opacity-50 text-white font-semibold px-4 py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (

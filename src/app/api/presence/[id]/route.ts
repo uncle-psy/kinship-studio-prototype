@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getPresence, updatePresence, deletePresence } from "@/lib/presence-store";
+import { getPresence, updatePresence, deletePresence, isValidHandle, isHandleTaken } from "@/lib/presence-store";
 
 export async function GET(
   _request: Request,
@@ -20,8 +20,24 @@ export async function PUT(
   const { id } = await params;
   const updates = await request.json();
 
+  // Validate handle if being updated
+  if (updates.handle !== undefined) {
+    const newHandle = String(updates.handle).trim().toLowerCase();
+    if (!isValidHandle(newHandle)) {
+      return NextResponse.json(
+        { error: "Handle may only contain letters, numbers, underscores, and periods (max 25 characters)" },
+        { status: 400 }
+      );
+    }
+    if (await isHandleTaken(newHandle, id)) {
+      return NextResponse.json({ error: "That handle is already taken" }, { status: 409 });
+    }
+    updates.handle = newHandle;
+  }
+
   const allowed = [
     "name",
+    "handle",
     "briefDescription",
     "description",
     "backstory",

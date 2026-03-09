@@ -168,8 +168,15 @@ export default function PresenceDetailPage() {
   const [presence, setPresence] = useState<Presence | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Handle constants
+  const HANDLE_RE = /^[a-zA-Z0-9_.]*$/;
+  const HANDLE_MAX = 25;
+
   // Editable fields
   const [name, setName] = useState("");
+  const [handle, setHandle] = useState("");
+  const [editingHandle, setEditingHandle] = useState(false);
+  const [handleError, setHandleError] = useState("");
   const [briefDescription, setBriefDescription] = useState("");
   const [editingBrief, setEditingBrief] = useState(false);
   const [description, setDescription] = useState("");
@@ -181,6 +188,7 @@ export default function PresenceDetailPage() {
   const [backSaving, setBackSaving] = useState(false);
   const [backFlash, setBackFlash]   = useState(false);
   const [nameSaving, setNameSaving] = useState(false);
+  const [handleSaving, setHandleSaving] = useState(false);
   const [briefSaving, setBriefSaving] = useState(false);
 
   // Relationships
@@ -220,6 +228,7 @@ export default function PresenceDetailPage() {
       const p: Presence = data.presence;
       setPresence(p);
       setName(p.name);
+      setHandle(p.handle || "");
       setBriefDescription(p.briefDescription || "");
       setDescription(p.description || "");
       setBackstory(p.backstory || "");
@@ -248,6 +257,34 @@ export default function PresenceDetailPage() {
     });
     if (res.ok) { const d = await res.json(); setPresence(d.presence); setName(d.presence.name); }
     setNameSaving(false);
+  }
+
+  // ── Save handle ──
+  async function handleSaveHandle() {
+    const trimmed = handle.trim().toLowerCase();
+    if (!trimmed) { setHandleError("Handle is required"); return; }
+    if (!HANDLE_RE.test(trimmed) || trimmed.length > HANDLE_MAX) {
+      setHandleError("Only letters, numbers, _ and . — max 25 characters");
+      return;
+    }
+    if (trimmed === presence?.handle) { setEditingHandle(false); return; }
+    setHandleSaving(true);
+    setHandleError("");
+    const res = await fetch(`/api/presence/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ handle: trimmed }),
+    });
+    if (res.ok) {
+      const d = await res.json();
+      setPresence(d.presence);
+      setHandle(d.presence.handle);
+      setEditingHandle(false);
+    } else {
+      const d = await res.json();
+      setHandleError(d.error || "Failed to update handle");
+    }
+    setHandleSaving(false);
   }
 
   // ── Save brief description ──
@@ -396,6 +433,86 @@ export default function PresenceDetailPage() {
           Delete
         </button>
       </div>
+
+      {/* Handle — inline editable */}
+      <div className="ml-[52px] mb-2 flex items-start gap-2">
+        {editingHandle ? (
+          <>
+            <div className="flex items-center flex-1 min-w-0">
+              <span className="text-muted text-sm mr-1 shrink-0">@</span>
+              <div className="flex-1 relative min-w-0">
+                <input
+                  type="text"
+                  value={handle}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/[^a-zA-Z0-9_.]/g, "").slice(0, HANDLE_MAX);
+                    setHandle(cleaned);
+                    setHandleError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSaveHandle();
+                    if (e.key === "Escape") {
+                      setHandle(presence?.handle || "");
+                      setHandleError("");
+                      setEditingHandle(false);
+                    }
+                  }}
+                  autoFocus
+                  maxLength={HANDLE_MAX}
+                  placeholder="handle"
+                  className={`w-full text-sm bg-input border rounded-lg px-3 py-1.5 text-foreground placeholder:text-muted focus:outline-none pr-12 ${
+                    handleError ? "border-red-500/50 focus:border-red-500/70" : "border-accent/40 focus:border-accent/70"
+                  }`}
+                />
+                <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs tabular-nums pointer-events-none ${
+                  handle.length >= HANDLE_MAX ? "text-red-400" : "text-muted"
+                }`}>
+                  {handle.length}/{HANDLE_MAX}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={handleSaveHandle}
+              disabled={handleSaving}
+              className="shrink-0 bg-accent hover:bg-accent-dark text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-60"
+            >
+              {handleSaving
+                ? <Icon icon="lucide:loader-2" width={12} height={12} className="animate-spin" />
+                : <Icon icon="lucide:check" width={12} height={12} />}
+              Save
+            </button>
+            <button
+              onClick={() => { setHandle(presence?.handle || ""); setHandleError(""); setEditingHandle(false); }}
+              className="shrink-0 text-muted hover:text-white text-xs px-2 py-1.5 rounded-lg transition-colors"
+            >
+              <Icon icon="lucide:x" width={12} height={12} />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setEditingHandle(true)}
+            className="group flex items-center gap-2 text-left"
+          >
+            <span className="text-sm text-muted font-mono">
+              {handle ? `@${handle}` : <span className="text-muted/40 not-italic">Add a handle…</span>}
+            </span>
+            <Icon
+              icon="lucide:pencil"
+              width={12}
+              height={12}
+              className="text-muted/30 group-hover:text-accent transition-colors shrink-0"
+            />
+          </button>
+        )}
+      </div>
+      {handleError && (
+        <div className="ml-[52px] mb-1">
+          <p className="text-xs text-red-400 flex items-center gap-1">
+            <Icon icon="lucide:alert-circle" width={11} height={11} />
+            {handleError}
+          </p>
+        </div>
+      )}
 
       {/* Brief description — inline editable */}
       <div className="ml-[52px] mb-6 flex items-start gap-2">

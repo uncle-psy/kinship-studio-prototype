@@ -43,6 +43,7 @@ export interface PresenceSignal {
 export interface Presence {
   id: string;
   name: string;
+  handle: string;            // unique, letters/numbers/underscore/period, max 25
   briefDescription: string;  // seed from creation
   description: string;       // AI-generated / edited full description
   backstory: string;         // AI-generated / edited backstory

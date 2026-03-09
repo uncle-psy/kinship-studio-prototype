@@ -109,15 +109,35 @@ export async function getPresence(id: string): Promise<Presence | null> {
   return kv.get<Presence>(`presence:${id}`);
 }
 
-export async function createPresence(name: string, briefDescription = ""): Promise<Presence> {
+// ─── Handle helpers ───────────────────────────────────────────────────────────
+const HANDLE_RE = /^[a-zA-Z0-9_.]{1,25}$/;
+export const HANDLE_MAX = 25;
+export function isValidHandle(h: string): boolean { return HANDLE_RE.test(h); }
+
+/** Returns true if the handle is already claimed by another presence */
+export async function isHandleTaken(handle: string, excludeId?: string): Promise<boolean> {
+  const kv = getStore();
+  const ownerId = await kv.get<string>(`presence:handle:${handle.toLowerCase()}`);
+  if (!ownerId) return false;
+  if (excludeId && ownerId === excludeId) return false;
+  return true;
+}
+
+export async function createPresence(
+  name: string,
+  briefDescription = "",
+  handle = ""
+): Promise<Presence> {
   const kv = getStore();
   const { nanoid } = await import("nanoid");
   const id = `presence_${nanoid(8)}`;
   const now = new Date().toISOString();
+  const normalHandle = handle.toLowerCase();
 
   const presence: Presence = {
     id,
     name,
+    handle: normalHandle,
     briefDescription,
     description: "",
     backstory: "",
@@ -130,6 +150,7 @@ export async function createPresence(name: string, briefDescription = ""): Promi
 
   await kv.set(`presence:${id}`, presence);
   await kv.sadd("presence:list", id);
+  if (normalHandle) await kv.set(`presence:handle:${normalHandle}`, id);
 
   return presence;
 }
@@ -141,6 +162,14 @@ export async function updatePresence(
   const kv = getStore();
   const existing = await kv.get<Presence>(`presence:${id}`);
   if (!existing) return null;
+
+  // Handle handle change: remove old mapping, add new
+  if (updates.handle !== undefined && updates.handle !== existing.handle) {
+    const newHandle = updates.handle.toLowerCase();
+    updates.handle = newHandle;
+    if (existing.handle) await kv.del(`presence:handle:${existing.handle}`);
+    if (newHandle) await kv.set(`presence:handle:${newHandle}`, id);
+  }
 
   const updated: Presence = {
     ...existing,
@@ -156,6 +185,8 @@ export async function updatePresence(
 
 export async function deletePresence(id: string): Promise<void> {
   const kv = getStore();
+  const existing = await kv.get<Presence>(`presence:${id}`);
+  if (existing?.handle) await kv.del(`presence:handle:${existing.handle}`);
   await kv.del(`presence:${id}`);
   await kv.srem("presence:list", id);
 }
