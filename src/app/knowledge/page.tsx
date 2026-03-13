@@ -47,7 +47,7 @@ export default function KnowledgePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Knowledge Bases</h1>
+          <h1 className="text-3xl font-bold text-white">Inform</h1>
           <p className="text-muted mt-1">
             {knowledgeBases.length} knowledge base{knowledgeBases.length !== 1 ? "s" : ""}
           </p>

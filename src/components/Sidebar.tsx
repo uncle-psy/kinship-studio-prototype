@@ -15,12 +15,14 @@ const navSections = [
     ],
   },
   {
-    label: "Actors",
+    label: "AGENTS",
     items: [
       { href: "/presence", icon: "lucide:user-round", label: "Presence" },
-      { href: "/knowledge", icon: "lucide:brain", label: "Knowledge" },
-      { href: "/prompts", icon: "lucide:message-square-code", label: "Prompts" },
-      { href: "/progress", icon: "lucide:activity", label: "Signals" },
+      { href: "/knowledge", icon: "lucide:brain", label: "Inform" },
+      { href: "/prompts", icon: "lucide:message-square-code", label: "Instruct" },
+      { href: "/empower", icon: "lucide:plug-2", label: "Empower" },
+      { href: "/align", icon: "lucide:workflow", label: "Align" },
+      { href: "/progress", icon: "lucide:activity", label: "Vibes" },
     ],
   },
   {
@@ -40,14 +42,38 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-[60px] w-[220px] h-[calc(100vh-60px)] bg-sidebar border-r border-card-border overflow-y-auto py-4 px-3">
       {/* Platform */}
-      <div className="mb-4">
+      <div className="mb-2">
         <div className="text-[10px] font-semibold text-white/40 uppercase tracking-wider px-3 mb-1">
           Platform
         </div>
         <div className="px-3 py-1.5 text-accent text-sm flex items-center gap-2">
           <Icon icon="lucide:layers" width={16} height={16} className="text-accent" />
-          Kinship Today
+          Kinship Agents
         </div>
+      </div>
+
+      {/* Platform Settings (moved up, below platform name) */}
+      <div className="mb-4">
+        <ul>
+          <li>
+            <Link
+              href="/platform-settings"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                pathname === "/platform-settings"
+                  ? "bg-accent/20 text-accent"
+                  : "text-white/70 hover:bg-white/[0.06] hover:text-white"
+              }`}
+            >
+              <Icon
+                icon="lucide:settings"
+                width={18}
+                height={18}
+                className={pathname === "/platform-settings" ? "text-accent" : "text-white"}
+              />
+              <span>Platform Settings</span>
+            </Link>
+          </li>
+        </ul>
       </div>
 
       {/* Projects */}
@@ -124,30 +150,6 @@ export function Sidebar() {
           </ul>
         </div>
       ))}
-
-      {/* Bottom items */}
-      <div className="mt-2">
-        <ul>
-          <li>
-            <Link
-              href="/platform-settings"
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                pathname === "/platform-settings"
-                  ? "bg-accent/20 text-accent"
-                  : "text-white/70 hover:bg-white/[0.06] hover:text-white"
-              }`}
-            >
-              <Icon
-                icon="lucide:settings"
-                width={18}
-                height={18}
-                className={pathname === "/platform-settings" ? "text-accent" : "text-white"}
-              />
-              <span>Platform Settings</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
     </aside>
   );
 }

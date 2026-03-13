@@ -13,8 +13,8 @@ export default function ProgressPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Signals Framework</h1>
-          <p className="text-muted mt-1">7 signals of personal growth measurement</p>
+          <h1 className="text-3xl font-bold text-white">Vibes</h1>
+          <p className="text-muted mt-1">7 vibes of personal growth measurement</p>
         </div>
         <button className="bg-card border border-card-border hover:border-accent/50 text-foreground font-medium px-5 py-2.5 rounded-full transition-colors flex items-center gap-2">
           📋 Rubric Editor
