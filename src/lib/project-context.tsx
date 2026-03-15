@@ -1,32 +1,57 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
-
-export interface Project {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-const ALL_PROJECTS: Project[] = [
-  { id: "mapshifting", name: "Mapshifting", slug: "mapshifting" },
-  { id: "money-maker", name: "Money Maker", slug: "money-maker" },
-  { id: "vets-visions", name: "Vets Visions", slug: "vets-visions" },
-];
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import type { Project } from "./types";
 
 interface ProjectContextValue {
   projects: Project[];
-  activeProject: Project;
+  activeProject: Project | null;
   setActiveProject: (project: Project) => void;
+  refreshProjects: () => Promise<void>;
+  loading: boolean;
 }
 
 const ProjectContext = createContext<ProjectContextValue | null>(null);
 
 export function ProjectProvider({ children }: { children: ReactNode }) {
-  const [activeProject, setActiveProject] = useState<Project>(ALL_PROJECTS[0]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refreshProjects = useCallback(async () => {
+    try {
+      const res = await fetch("/api/projects");
+      const data = await res.json();
+      const fetched: Project[] = data.projects || [];
+      setProjects(fetched);
+
+      // If no active project yet, or active project was deleted, pick first
+      setActiveProject((prev) => {
+        if (prev && fetched.find((p) => p.id === prev.id)) return prev;
+        return fetched[0] || null;
+      });
+    } catch {
+      // Keep existing state on error
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshProjects();
+  }, [refreshProjects]);
 
   return (
-    <ProjectContext.Provider value={{ projects: ALL_PROJECTS, activeProject, setActiveProject }}>
+    <ProjectContext.Provider
+      value={{ projects, activeProject, setActiveProject, refreshProjects, loading }}
+    >
       {children}
     </ProjectContext.Provider>
   );

@@ -58,6 +58,22 @@ export interface Presence {
   updatedAt: string;
 }
 
+export type ProjectVisibility = "secret" | "private" | "pending" | "public";
+export type ProjectStatus = "active" | "archived";
+
+export interface Project {
+  id: string;
+  name: string;
+  codeName: string;
+  description: string;
+  visibility: ProjectVisibility;
+  owner: string;
+  createdAt: string;
+  updatedAt: string;
+  team: string[];
+  status: ProjectStatus;
+}
+
 export interface PineconeVector {
   id: string;
   values: number[];

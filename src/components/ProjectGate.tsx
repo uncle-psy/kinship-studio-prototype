@@ -17,9 +17,13 @@ interface ProjectGateProps {
  * placeholder instead of real data (which only exists for Mapshifting).
  */
 export function ProjectGate({ children, sectionName, icon }: ProjectGateProps) {
-  const { activeProject } = useProject();
+  const { activeProject, loading } = useProject();
 
-  if (activeProject.id === "mapshifting") {
+  if (loading || !activeProject) {
+    return <div className="text-muted py-12 text-center">Loading…</div>;
+  }
+
+  if (activeProject.codeName === "mapshifting") {
     return <>{children}</>;
   }
 

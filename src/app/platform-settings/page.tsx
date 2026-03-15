@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
-import type { Presence, KnowledgeBase, Prompt } from "@/lib/types";
+import type { Presence, KnowledgeBase, Prompt, Project, ProjectVisibility } from "@/lib/types";
+import { useProject } from "@/lib/project-context";
 
 // ─── Signals ──────────────────────────────────────────────────────────────────
 const ALL_SIGNALS = [
@@ -67,11 +68,6 @@ const INITIAL_APPROVALS = [
   { id: "a7", type: "actor",          typeLabel: "Actor",          name: "The Cartographer",            submittedBy: "Jordan Kim",     date: "Mar 1, 2026",  status: "approved" },
 ];
 
-const INITIAL_PROJECTS: Project[] = [
-  { id: "p1", name: "Mapshifting",    codeName: "mapshifting",    description: "Interactive map-based exploration game",          visibility: "private", owner: "Jordan Kim",     createdAt: "Jan 2024", team: ["Jordan Kim", "Alex Chen"], status: "active" },
-  { id: "p4", name: "Money Maker",    codeName: "money-maker",    description: "Financial literacy through interactive gameplay", visibility: "private", owner: "Jordan Kim",     createdAt: "Mar 2026", team: ["Jordan Kim"], status: "active" },
-  { id: "p5", name: "Vet's Visions",  codeName: "vets-visions",   description: "Veteran wellness and storytelling platform",     visibility: "private", owner: "Taylor Wong",    createdAt: "Mar 2026", team: ["Taylor Wong"], status: "active" },
-];
 
 const TYPE_COLORS: Record<string, string> = {
   "knowledge-base": "#3b82f6",
@@ -91,22 +87,7 @@ const VISIBILITY_CONFIG = {
 const HANDLE_RE = /^[a-zA-Z0-9_.]*$/;
 const HANDLE_MAX = 50;
 
-type Tab        = "overview" | "theme" | "signals" | "presence" | "users" | "approvals" | "projects" | "danger";
-type Visibility = "secret" | "private" | "pending" | "public";
-
-type ProjectStatus = "active" | "archived";
-
-interface Project {
-  id: string;
-  name: string;
-  codeName: string;
-  description: string;
-  visibility: Visibility;
-  owner: string;
-  createdAt: string;
-  team: string[];
-  status: ProjectStatus;
-}
+type Tab = "overview" | "theme" | "signals" | "presence" | "users" | "approvals" | "projects" | "danger";
 
 const TABS: { id: Tab; label: string; icon: string; danger?: boolean }[] = [
   { id: "overview",  label: "Overview",    icon: "lucide:layout-dashboard" },
@@ -170,6 +151,7 @@ function FieldRow({ label, hint, children }: { label: string; hint?: string; chi
 
 // ─── Main component ────────────────────────────────────────────────────────────
 export default function PlatformSettingsPage() {
+  const { projects, refreshProjects } = useProject();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   // ── Identity ──
@@ -214,8 +196,6 @@ export default function PlatformSettingsPage() {
   const [approvalTypeFilter, setApprovalTypeFilter] = useState("all");
 
   // ── Projects ──
-  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
-
   const [showNewProject, setShowNewProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectCodeName, setNewProjectCodeName] = useState("");
@@ -279,8 +259,13 @@ export default function PlatformSettingsPage() {
     );
   }
 
-  function updateProjectVisibility(id: string, v: Visibility) {
-    setProjects((prev) => prev.map((p) => p.id === id ? { ...p, visibility: v } : p));
+  async function updateProjectVisibility(id: string, v: ProjectVisibility) {
+    await fetch(`/api/projects/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ visibility: v }),
+    });
+    await refreshProjects();
   }
 
   function updateUserRole(id: string, role: string) {
@@ -309,48 +294,57 @@ export default function PlatformSettingsPage() {
     setShowInvite(false);
   }
 
-  function handleCreateProject() {
+  async function handleCreateProject() {
     if (!newProjectName.trim()) return;
     setNewProjectSaving(true);
-    setTimeout(() => {
-      const codeName = newProjectCodeName.trim() || newProjectName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-      const teamMembers = newProjectTeam.trim() ? newProjectTeam.split(",").map((t) => t.trim()).filter(Boolean) : ["Jordan Kim"];
-      setProjects((prev) => [
-        ...prev,
-        {
-          id: `p${Date.now()}`,
+    try {
+      const teamMembers = newProjectTeam.trim()
+        ? newProjectTeam.split(",").map((t) => t.trim()).filter(Boolean)
+        : ["Jordan Kim"];
+      await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: newProjectName.trim(),
-          codeName,
-          description: newProjectDesc.trim() || "No description",
-          visibility: "private" as Visibility,
+          codeName: newProjectCodeName.trim() || undefined,
+          description: newProjectDesc.trim() || undefined,
           owner: teamMembers[0],
-          createdAt: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
           team: teamMembers,
-          status: "active" as ProjectStatus,
-        },
-      ]);
+        }),
+      });
+      await refreshProjects();
       setNewProjectName("");
       setNewProjectCodeName("");
       setNewProjectDesc("");
       setNewProjectTeam("");
-      setNewProjectSaving(false);
       setShowNewProject(false);
-    }, 600);
+    } finally {
+      setNewProjectSaving(false);
+    }
   }
 
-  function archiveProject(id: string) {
-    setProjects((prev) => prev.map((p) => p.id === id ? { ...p, status: (p.status === "archived" ? "active" : "archived") as ProjectStatus } : p));
+  async function archiveProject(id: string) {
+    const project = projects.find((p) => p.id === id);
+    const newStatus = project?.status === "archived" ? "active" : "archived";
+    await fetch(`/api/projects/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    await refreshProjects();
     setOpenActionMenu(null);
   }
 
-  function removeProject(id: string) {
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+  async function removeProject(id: string) {
+    await fetch(`/api/projects/${id}`, { method: "DELETE" });
+    await refreshProjects();
     setConfirmAction(null);
     setOpenActionMenu(null);
   }
 
-  function deleteProject(id: string) {
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+  async function deleteProject(id: string) {
+    await fetch(`/api/projects/${id}`, { method: "DELETE" });
+    await refreshProjects();
     setConfirmAction(null);
     setOpenActionMenu(null);
   }
@@ -1083,7 +1077,7 @@ export default function PlatformSettingsPage() {
                   </div>
                   <p className="text-xs text-muted mt-0.5">{project.description}</p>
                   <p className="text-xs text-muted/50 mt-0.5">
-                    by {project.owner} · Created {project.createdAt}
+                    by {project.owner} · Created {new Date(project.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
                     {project.team.length > 1 && ` · Team: ${project.team.join(", ")}`}
                   </p>
                 </div>
@@ -1158,7 +1152,7 @@ export default function PlatformSettingsPage() {
         <div>
           <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Visibility Levels</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {(Object.entries(VISIBILITY_CONFIG) as [Visibility, typeof VISIBILITY_CONFIG[Visibility]][]).map(([key, v]) => (
+            {(Object.entries(VISIBILITY_CONFIG) as [ProjectVisibility, typeof VISIBILITY_CONFIG[ProjectVisibility]][]).map(([key, v]) => (
               <div key={key} className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs ${v.bg} ${v.color}`}>
                 <Icon icon={v.icon} width={13} height={13} />
                 <div>

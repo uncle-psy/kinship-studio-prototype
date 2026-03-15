@@ -90,7 +90,7 @@ export function Sidebar() {
         {projectsOpen && (
           <ul className="space-y-0.5">
             {projects.map((project) => {
-              const isActive = activeProject.id === project.id && !pathname.startsWith("/platform-settings");
+              const isActive = activeProject?.id === project.id && !pathname.startsWith("/platform-settings");
               return (
                 <li key={project.id}>
                   <button
