@@ -68,9 +68,9 @@ const INITIAL_APPROVALS = [
 ];
 
 const INITIAL_PROJECTS: Project[] = [
-  { id: "p1", name: "Mapshifting",    codeName: "mapshifting",    description: "Interactive map-based exploration game",          visibility: "private", owner: "Jordan Kim",     createdAt: "Jan 2024", team: ["Jordan Kim", "Alex Chen"] },
-  { id: "p4", name: "Money Maker",    codeName: "money-maker",    description: "Financial literacy through interactive gameplay", visibility: "private", owner: "Jordan Kim",     createdAt: "Mar 2026", team: ["Jordan Kim"] },
-  { id: "p5", name: "Vet's Visions",  codeName: "vets-visions",   description: "Veteran wellness and storytelling platform",     visibility: "private", owner: "Taylor Wong",    createdAt: "Mar 2026", team: ["Taylor Wong"] },
+  { id: "p1", name: "Mapshifting",    codeName: "mapshifting",    description: "Interactive map-based exploration game",          visibility: "private", owner: "Jordan Kim",     createdAt: "Jan 2024", team: ["Jordan Kim", "Alex Chen"], status: "active" },
+  { id: "p4", name: "Money Maker",    codeName: "money-maker",    description: "Financial literacy through interactive gameplay", visibility: "private", owner: "Jordan Kim",     createdAt: "Mar 2026", team: ["Jordan Kim"], status: "active" },
+  { id: "p5", name: "Vet's Visions",  codeName: "vets-visions",   description: "Veteran wellness and storytelling platform",     visibility: "private", owner: "Taylor Wong",    createdAt: "Mar 2026", team: ["Taylor Wong"], status: "active" },
 ];
 
 const INITIAL_EXPERIENCES = [
@@ -99,6 +99,8 @@ const HANDLE_MAX = 50;
 type Tab        = "overview" | "theme" | "signals" | "presence" | "users" | "approvals" | "projects" | "danger";
 type Visibility = "secret" | "private" | "pending" | "public";
 
+type ProjectStatus = "active" | "archived";
+
 interface Project {
   id: string;
   name: string;
@@ -108,6 +110,7 @@ interface Project {
   owner: string;
   createdAt: string;
   team: string[];
+  status: ProjectStatus;
 }
 
 const TABS: { id: Tab; label: string; icon: string; danger?: boolean }[] = [
@@ -224,6 +227,9 @@ export default function PlatformSettingsPage() {
   const [newProjectDesc, setNewProjectDesc] = useState("");
   const [newProjectTeam, setNewProjectTeam] = useState("");
   const [newProjectSaving, setNewProjectSaving] = useState(false);
+  const [showExchangeModal, setShowExchangeModal] = useState(false);
+  const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ type: "remove" | "delete"; projectId: string; projectName: string } | null>(null);
 
   const flashTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -325,6 +331,7 @@ export default function PlatformSettingsPage() {
           owner: teamMembers[0],
           createdAt: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
           team: teamMembers,
+          status: "active" as ProjectStatus,
         },
       ]);
       setNewProjectName("");
@@ -334,6 +341,23 @@ export default function PlatformSettingsPage() {
       setNewProjectSaving(false);
       setShowNewProject(false);
     }, 600);
+  }
+
+  function archiveProject(id: string) {
+    setProjects((prev) => prev.map((p) => p.id === id ? { ...p, status: (p.status === "archived" ? "active" : "archived") as ProjectStatus } : p));
+    setOpenActionMenu(null);
+  }
+
+  function removeProject(id: string) {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+    setConfirmAction(null);
+    setOpenActionMenu(null);
+  }
+
+  function deleteProject(id: string) {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+    setConfirmAction(null);
+    setOpenActionMenu(null);
   }
 
   const pendingCount = approvals.filter((a) => a.status === "pending").length;
@@ -1014,40 +1038,53 @@ export default function PlatformSettingsPage() {
   // ─────────────────────────────────────────────────────────────────────────────
   function renderProjects() {
     return (
-      <div>
+      <div onClick={() => openActionMenu && setOpenActionMenu(null)}>
         {/* ── Projects ── */}
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-xl font-bold text-white">Projects</h2>
             <p className="text-muted text-sm mt-0.5">Manage project visibility and approve public requests</p>
           </div>
-          <button
-            onClick={() => setShowNewProject(true)}
-            className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2 rounded-full transition-colors flex items-center gap-2 text-sm"
-          >
-            <Icon icon="lucide:plus" width={15} height={15} />
-            New Project
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowExchangeModal(true)}
+              className="border border-card-border hover:border-accent/40 text-muted hover:text-white font-medium px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm"
+            >
+              <Icon icon="lucide:globe" width={15} height={15} />
+              Add from Exchange
+            </button>
+            <button
+              onClick={() => setShowNewProject(true)}
+              className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2 rounded-full transition-colors flex items-center gap-2 text-sm"
+            >
+              <Icon icon="lucide:plus" width={15} height={15} />
+              New Project
+            </button>
+          </div>
         </div>
 
         <div className="bg-card border border-card-border rounded-xl overflow-hidden mb-8">
           <div className="px-5 py-3 border-b border-card-border grid grid-cols-[1fr_auto_auto] gap-4">
             <p className="text-xs font-semibold text-muted uppercase tracking-wider">Project</p>
             <p className="text-xs font-semibold text-muted uppercase tracking-wider w-44 text-center">Visibility</p>
-            <p className="text-xs font-semibold text-muted uppercase tracking-wider w-32" />
+            <p className="text-xs font-semibold text-muted uppercase tracking-wider w-10" />
           </div>
 
           {projects.map((project) => {
             const vis = VISIBILITY_CONFIG[project.visibility];
+            const isArchived = project.status === "archived";
             return (
               <div
                 key={project.id}
-                className="px-5 py-4 border-b border-card-border last:border-0 grid grid-cols-[1fr_auto_auto] gap-4 items-center hover:bg-white/[0.02] transition-colors"
+                className={`px-5 py-4 border-b border-card-border last:border-0 grid grid-cols-[1fr_auto_auto] gap-4 items-center hover:bg-white/[0.02] transition-colors ${isArchived ? "opacity-50" : ""}`}
               >
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium text-white">{project.name}</p>
                     <span className="text-xs font-mono text-accent/60">@{project.codeName}</span>
+                    {isArchived && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/[0.08] text-white/50">Archived</span>
+                    )}
                   </div>
                   <p className="text-xs text-muted mt-0.5">{project.description}</p>
                   <p className="text-xs text-muted/50 mt-0.5">
@@ -1063,30 +1100,58 @@ export default function PlatformSettingsPage() {
                   </div>
                 </div>
 
-                <div className="w-32 flex gap-1.5 justify-end">
-                  {project.visibility === "pending" && (
-                    <>
+                <div className="w-10 flex justify-end relative">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setOpenActionMenu(openActionMenu === project.id ? null : project.id); }}
+                    className="p-1.5 rounded-lg text-muted hover:text-white hover:bg-white/[0.08] transition-colors"
+                  >
+                    <Icon icon="lucide:more-horizontal" width={16} height={16} />
+                  </button>
+
+                  {openActionMenu === project.id && (
+                    <div className="absolute right-0 top-9 z-40 w-48 bg-card border border-card-border rounded-xl shadow-2xl py-1 overflow-hidden">
+                      {project.visibility === "pending" && (
+                        <>
+                          <button
+                            onClick={() => { updateProjectVisibility(project.id, "public"); setOpenActionMenu(null); }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-green-400 hover:bg-green-500/10 transition-colors"
+                          >
+                            <Icon icon="lucide:check-circle" width={14} height={14} />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => { updateProjectVisibility(project.id, "private"); setOpenActionMenu(null); }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-yellow-400 hover:bg-yellow-500/10 transition-colors"
+                          >
+                            <Icon icon="lucide:x-circle" width={14} height={14} />
+                            Reject
+                          </button>
+                          <div className="border-t border-card-border my-1" />
+                        </>
+                      )}
                       <button
-                        onClick={() => updateProjectVisibility(project.id, "private")}
-                        className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 px-2.5 py-1 rounded-lg transition-colors"
+                        onClick={() => archiveProject(project.id)}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted hover:text-white hover:bg-white/[0.06] transition-colors"
                       >
-                        Reject
+                        <Icon icon="lucide:archive" width={14} height={14} />
+                        {isArchived ? "Unarchive" : "Archive"}
                       </button>
                       <button
-                        onClick={() => updateProjectVisibility(project.id, "public")}
-                        className="text-xs text-green-400 bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 px-2.5 py-1 rounded-lg transition-colors"
+                        onClick={() => { setConfirmAction({ type: "remove", projectId: project.id, projectName: project.name }); setOpenActionMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted hover:text-white hover:bg-white/[0.06] transition-colors"
                       >
-                        Approve
+                        <Icon icon="lucide:log-out" width={14} height={14} />
+                        Remove
                       </button>
-                    </>
-                  )}
-                  {project.visibility === "public" && (
-                    <button
-                      onClick={() => updateProjectVisibility(project.id, "private")}
-                      className="text-xs text-muted bg-white/5 border border-white/10 hover:border-white/20 hover:text-foreground px-2.5 py-1 rounded-lg transition-colors"
-                    >
-                      Revoke
-                    </button>
+                      <div className="border-t border-card-border my-1" />
+                      <button
+                        onClick={() => { setConfirmAction({ type: "delete", projectId: project.id, projectName: project.name }); setOpenActionMenu(null); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                      >
+                        <Icon icon="lucide:trash-2" width={14} height={14} />
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -1147,6 +1212,76 @@ export default function PlatformSettingsPage() {
             ))}
           </div>
         </div>
+
+        {/* ── Confirm Remove/Delete Modal ── */}
+        {confirmAction && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-card border border-card-border rounded-2xl w-full max-w-md shadow-2xl">
+              <div className="p-6">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${confirmAction.type === "delete" ? "bg-red-500/15" : "bg-yellow-500/15"}`}>
+                  <Icon
+                    icon={confirmAction.type === "delete" ? "lucide:trash-2" : "lucide:log-out"}
+                    width={24}
+                    height={24}
+                    className={confirmAction.type === "delete" ? "text-red-400" : "text-yellow-400"}
+                  />
+                </div>
+                <h2 className="text-lg font-bold text-white mb-1">
+                  {confirmAction.type === "delete" ? "Delete" : "Remove"} &ldquo;{confirmAction.projectName}&rdquo;?
+                </h2>
+                <p className="text-sm text-muted leading-relaxed">
+                  {confirmAction.type === "delete"
+                    ? "This will permanently delete this project and all its data. This action cannot be undone."
+                    : "This will remove the project from your platform. The project will still exist in the Exchange and can be re-added later."}
+                </p>
+              </div>
+              <div className="flex items-center gap-3 px-6 pb-6">
+                <button
+                  onClick={() => {
+                    if (confirmAction.type === "delete") deleteProject(confirmAction.projectId);
+                    else removeProject(confirmAction.projectId);
+                  }}
+                  className={`flex-1 font-semibold py-2.5 rounded-xl transition-colors ${
+                    confirmAction.type === "delete"
+                      ? "bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30"
+                      : "bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/30"
+                  }`}
+                >
+                  {confirmAction.type === "delete" ? "Delete Project" : "Remove Project"}
+                </button>
+                <button
+                  onClick={() => setConfirmAction(null)}
+                  className="px-5 py-2.5 border border-card-border rounded-xl text-muted hover:text-white hover:border-white/30 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Add from Exchange Modal ── */}
+        {showExchangeModal && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-card border border-card-border rounded-2xl w-full max-w-md shadow-2xl">
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-accent/15 flex items-center justify-center mx-auto mb-4">
+                  <Icon icon="lucide:globe" width={32} height={32} className="text-accent" />
+                </div>
+                <h2 className="text-xl font-bold text-white mb-2">Project Exchange</h2>
+                <p className="text-sm text-muted leading-relaxed mb-6">
+                  Browse and add published projects from the Kinship Exchange to your platform. This feature is coming soon.
+                </p>
+                <button
+                  onClick={() => setShowExchangeModal(false)}
+                  className="bg-accent hover:bg-accent-dark text-white font-semibold px-6 py-2.5 rounded-xl transition-colors"
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── New Project Modal ── */}
         {showNewProject && (
