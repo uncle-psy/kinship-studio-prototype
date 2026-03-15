@@ -1,11 +1,9 @@
 "use client";
 
 import { AssetGrid } from "@/components/AssetGrid";
-import { ProjectGate } from "@/components/ProjectGate";
 
 export default function AssetsPage() {
   return (
-    <ProjectGate sectionName="Library" icon="lucide:library">
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -52,6 +50,5 @@ export default function AssetsPage() {
 
       <AssetGrid />
     </div>
-    </ProjectGate>
   );
 }

@@ -11,9 +11,11 @@ function slugify(text: string): string {
 }
 
 // GET /api/knowledge — List all knowledge bases
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const kbs = await listKnowledgeBases();
+    const { searchParams } = new URL(request.url);
+    const projectId = searchParams.get("projectId") || undefined;
+    const kbs = await listKnowledgeBases(projectId);
     return NextResponse.json({ knowledgeBases: kbs });
   } catch (error) {
     console.error("List KBs error:", error);
@@ -27,7 +29,7 @@ export async function GET() {
 // POST /api/knowledge — Create a new knowledge base
 export async function POST(request: Request) {
   try {
-    const { name } = await request.json();
+    const { name, projectId } = await request.json();
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return NextResponse.json(
         { error: "Name is required" },
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
     }
 
     const namespace = `${slugify(name.trim())}-${nanoid(6)}`;
-    const kb = await createKnowledgeBase(name.trim(), namespace);
+    const kb = await createKnowledgeBase(name.trim(), namespace, projectId);
 
     return NextResponse.json(kb, { status: 201 });
   } catch (error) {

@@ -94,7 +94,7 @@ function getStore(): KVStore {
 
 // --- Knowledge Base CRUD ---
 
-export async function listKnowledgeBases(): Promise<KnowledgeBase[]> {
+export async function listKnowledgeBases(projectId?: string): Promise<KnowledgeBase[]> {
   const kv = getStore();
   const ids = await kv.smembers("kb:list");
   if (!ids || ids.length === 0) return [];
@@ -108,11 +108,15 @@ export async function listKnowledgeBases(): Promise<KnowledgeBase[]> {
     }
   }
 
-  kbs.sort(
+  const filtered = projectId
+    ? kbs.filter((kb) => (kb.projectId || "proj_mapshifting") === projectId)
+    : kbs;
+
+  filtered.sort(
     (a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-  return kbs;
+  return filtered;
 }
 
 export async function getKnowledgeBase(
@@ -128,7 +132,8 @@ export async function getKnowledgeBase(
 
 export async function createKnowledgeBase(
   name: string,
-  namespace: string
+  namespace: string,
+  projectId?: string
 ): Promise<KnowledgeBase> {
   const kv = getStore();
   const kb: KnowledgeBase = {
@@ -137,6 +142,7 @@ export async function createKnowledgeBase(
     namespace,
     createdAt: new Date().toISOString(),
     itemCount: 0,
+    projectId,
   };
 
   await kv.set(`kb:${namespace}`, kb);

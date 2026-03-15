@@ -87,7 +87,7 @@ function getStore(): KVStore {
   return memoryKV;
 }
 
-export async function listPresences(): Promise<Presence[]> {
+export async function listPresences(projectId?: string): Promise<Presence[]> {
   const kv = getStore();
   const ids = await kv.smembers("presence:list");
   if (!ids || ids.length === 0) return [];
@@ -98,10 +98,14 @@ export async function listPresences(): Promise<Presence[]> {
     if (data) presences.push(data);
   }
 
-  presences.sort(
+  const filtered = projectId
+    ? presences.filter((p) => (p.projectId || "proj_mapshifting") === projectId)
+    : presences;
+
+  filtered.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-  return presences;
+  return filtered;
 }
 
 export async function getPresence(id: string): Promise<Presence | null> {
@@ -126,7 +130,8 @@ export async function isHandleTaken(handle: string, excludeId?: string): Promise
 export async function createPresence(
   name: string,
   briefDescription = "",
-  handle = ""
+  handle = "",
+  projectId?: string
 ): Promise<Presence> {
   const kv = getStore();
   const { nanoid } = await import("nanoid");
@@ -146,6 +151,7 @@ export async function createPresence(
     signals: [],
     createdAt: now,
     updatedAt: now,
+    projectId,
   };
 
   await kv.set(`presence:${id}`, presence);

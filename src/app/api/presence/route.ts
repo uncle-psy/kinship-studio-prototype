@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { listPresences, createPresence, isValidHandle, isHandleTaken } from "@/lib/presence-store";
 
-export async function GET() {
-  const presences = await listPresences();
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const projectId = searchParams.get("projectId") || undefined;
+  const presences = await listPresences(projectId);
   return NextResponse.json({ presences });
 }
 
 export async function POST(request: Request) {
-  const { name, briefDescription, handle } = await request.json();
+  const { name, briefDescription, handle, projectId } = await request.json();
 
   if (!name?.trim()) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -31,7 +33,8 @@ export async function POST(request: Request) {
   const presence = await createPresence(
     name.trim(),
     (briefDescription ?? "").trim(),
-    rawHandle
+    rawHandle,
+    projectId
   );
   return NextResponse.json({ presence }, { status: 201 });
 }

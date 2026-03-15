@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
-import { ProjectGate } from "@/components/ProjectGate";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -520,7 +519,6 @@ export default function OfferingsPage() {
   const totalOfferings = providers.reduce((sum, p) => sum + p.offerings.length, 0);
 
   return (
-    <ProjectGate sectionName="Offerings" icon="lucide:store">
     <div>
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
@@ -643,6 +641,5 @@ export default function OfferingsPage() {
         />
       )}
     </div>
-    </ProjectGate>
   );
 }

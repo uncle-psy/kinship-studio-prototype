@@ -6,9 +6,10 @@ import { Icon } from "@iconify/react";
 interface CreatePromptModalProps {
   onClose: () => void;
   onCreate: (prompt: { id: string; name: string }) => void;
+  projectId?: string;
 }
 
-export function CreatePromptModal({ onClose, onCreate }: CreatePromptModalProps) {
+export function CreatePromptModal({ onClose, onCreate, projectId }: CreatePromptModalProps) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,7 +25,7 @@ export function CreatePromptModal({ onClose, onCreate }: CreatePromptModalProps)
       const res = await fetch("/api/prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify({ name: name.trim(), projectId }),
       });
 
       if (!res.ok) {

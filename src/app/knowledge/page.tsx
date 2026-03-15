@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { CreateKBModal } from "@/components/CreateKBModal";
-import { ProjectGate } from "@/components/ProjectGate";
+import { useProject } from "@/lib/project-context";
 
 interface KnowledgeBase {
   id: string;
@@ -16,14 +16,17 @@ interface KnowledgeBase {
 
 export default function KnowledgePage() {
   const router = useRouter();
+  const { activeProject } = useProject();
   const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [search, setSearch] = useState("");
 
   const fetchKBs = useCallback(async () => {
+    if (!activeProject) return;
+    setLoading(true);
     try {
-      const res = await fetch("/api/knowledge");
+      const res = await fetch(`/api/knowledge?projectId=${activeProject.id}`);
       if (res.ok) {
         const data = await res.json();
         setKnowledgeBases(data.knowledgeBases);
@@ -33,7 +36,7 @@ export default function KnowledgePage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeProject]);
 
   useEffect(() => {
     fetchKBs();
@@ -44,7 +47,6 @@ export default function KnowledgePage() {
   );
 
   return (
-    <ProjectGate sectionName="Knowledge Bases" icon="lucide:brain">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -172,6 +174,7 @@ export default function KnowledgePage() {
       {showCreate && (
         <CreateKBModal
           onClose={() => setShowCreate(false)}
+          projectId={activeProject?.id}
           onCreate={(kb) => {
             setShowCreate(false);
             router.push(`/knowledge/${kb.id}`);
@@ -179,6 +182,5 @@ export default function KnowledgePage() {
         />
       )}
     </div>
-    </ProjectGate>
   );
 }

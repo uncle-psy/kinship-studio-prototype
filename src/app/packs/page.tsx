@@ -1,6 +1,5 @@
 "use client";
 
-import { ProjectGate } from "@/components/ProjectGate";
 
 export default function PacksPage() {
   const packs = [
@@ -10,7 +9,6 @@ export default function PacksPage() {
   ];
 
   return (
-    <ProjectGate sectionName="Asset Packs" icon="lucide:package">
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -58,6 +56,5 @@ export default function PacksPage() {
         ))}
       </div>
     </div>
-    </ProjectGate>
   );
 }

@@ -6,9 +6,10 @@ import { Icon } from "@iconify/react";
 interface CreateKBModalProps {
   onClose: () => void;
   onCreate: (kb: { id: string; name: string; namespace: string }) => void;
+  projectId?: string;
 }
 
-export function CreateKBModal({ onClose, onCreate }: CreateKBModalProps) {
+export function CreateKBModal({ onClose, onCreate, projectId }: CreateKBModalProps) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,7 +25,7 @@ export function CreateKBModal({ onClose, onCreate }: CreateKBModalProps) {
       const res = await fetch("/api/knowledge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify({ name: name.trim(), projectId }),
       });
 
       if (!res.ok) {

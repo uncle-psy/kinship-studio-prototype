@@ -88,7 +88,7 @@ function getStore(): KVStore {
   return memoryKV;
 }
 
-export async function listPrompts(): Promise<Prompt[]> {
+export async function listPrompts(projectId?: string): Promise<Prompt[]> {
   const kv = getStore();
   const ids = await kv.smembers("prompt:list");
   if (!ids || ids.length === 0) return [];
@@ -99,10 +99,14 @@ export async function listPrompts(): Promise<Prompt[]> {
     if (data) prompts.push(data);
   }
 
-  prompts.sort(
+  const filtered = projectId
+    ? prompts.filter((p) => (p.projectId || "proj_mapshifting") === projectId)
+    : prompts;
+
+  filtered.sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-  return prompts;
+  return filtered;
 }
 
 export async function getPrompt(id: string): Promise<Prompt | null> {
@@ -110,7 +114,7 @@ export async function getPrompt(id: string): Promise<Prompt | null> {
   return kv.get<Prompt>(`prompt:${id}`);
 }
 
-export async function createPrompt(name: string): Promise<Prompt> {
+export async function createPrompt(name: string, projectId?: string): Promise<Prompt> {
   const kv = getStore();
   const { nanoid } = await import("nanoid");
   const id = `prompt_${nanoid(8)}`;
@@ -122,6 +126,7 @@ export async function createPrompt(name: string): Promise<Prompt> {
     content: "",
     createdAt: now,
     updatedAt: now,
+    projectId,
   };
 
   await kv.set(`prompt:${id}`, prompt);

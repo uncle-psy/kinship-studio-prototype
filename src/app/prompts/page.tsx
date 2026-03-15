@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { CreatePromptModal } from "@/components/CreatePromptModal";
-import { ProjectGate } from "@/components/ProjectGate";
+import { useProject } from "@/lib/project-context";
 
 interface Prompt {
   id: string;
@@ -20,14 +20,17 @@ interface Prompt {
 
 export default function PromptsPage() {
   const router = useRouter();
+  const { activeProject } = useProject();
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [search, setSearch] = useState("");
 
   const fetchPrompts = useCallback(async () => {
+    if (!activeProject) return;
+    setLoading(true);
     try {
-      const res = await fetch("/api/prompts");
+      const res = await fetch(`/api/prompts?projectId=${activeProject.id}`);
       if (res.ok) {
         const data = await res.json();
         setPrompts(data.prompts);
@@ -37,7 +40,7 @@ export default function PromptsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeProject]);
 
   useEffect(() => {
     fetchPrompts();
@@ -49,7 +52,6 @@ export default function PromptsPage() {
   );
 
   return (
-    <ProjectGate sectionName="Prompts" icon="lucide:message-square-code">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -188,6 +190,7 @@ export default function PromptsPage() {
       {showCreate && (
         <CreatePromptModal
           onClose={() => setShowCreate(false)}
+          projectId={activeProject?.id}
           onCreate={(p) => {
             setShowCreate(false);
             router.push(`/prompts/${p.id}`);
@@ -195,6 +198,5 @@ export default function PromptsPage() {
         />
       )}
     </div>
-    </ProjectGate>
   );
 }

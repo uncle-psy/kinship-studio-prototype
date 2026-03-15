@@ -4,6 +4,7 @@ export interface KnowledgeBase {
   namespace: string;
   createdAt: string;
   itemCount: number;
+  projectId?: string;
 }
 
 export interface KBItem {
@@ -30,6 +31,7 @@ export interface Prompt {
   connectedKBName?: string;
   createdAt: string;
   updatedAt: string;
+  projectId?: string;
 }
 
 export interface PresenceSignal {
@@ -56,6 +58,7 @@ export interface Presence {
   signals: PresenceSignal[];
   createdAt: string;
   updatedAt: string;
+  projectId?: string;
 }
 
 export type ProjectVisibility = "secret" | "private" | "pending" | "public";

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { CreatePresenceModal } from "@/components/CreatePresenceModal";
-import { ProjectGate } from "@/components/ProjectGate";
+import { useProject } from "@/lib/project-context";
 import type { Presence } from "@/lib/types";
 
 // Modal to choose between Presence (supervisor) or Agent (worker)
@@ -174,6 +174,7 @@ function CreateWorkerAgentModal({ onClose, onCreated }: { onClose: () => void; o
 
 export default function PresencePage() {
   const router = useRouter();
+  const { activeProject } = useProject();
   const [presences, setPresences] = useState<Presence[]>([]);
   const [loading, setLoading] = useState(true);
   const [showChoiceModal, setShowChoiceModal] = useState(false);
@@ -182,8 +183,10 @@ export default function PresencePage() {
   const [search, setSearch] = useState("");
 
   const fetchPresences = useCallback(async () => {
+    if (!activeProject) return;
+    setLoading(true);
     try {
-      const res = await fetch("/api/presence");
+      const res = await fetch(`/api/presence?projectId=${activeProject.id}`);
       if (res.ok) {
         const data = await res.json();
         setPresences(data.presences);
@@ -193,7 +196,7 @@ export default function PresencePage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeProject]);
 
   useEffect(() => {
     fetchPresences();
@@ -206,7 +209,6 @@ export default function PresencePage() {
   );
 
   return (
-    <ProjectGate sectionName="Agents" icon="lucide:user-round">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -367,6 +369,7 @@ export default function PresencePage() {
       {showCreatePresence && (
         <CreatePresenceModal
           onClose={() => setShowCreatePresence(false)}
+          projectId={activeProject?.id}
           onCreate={(p) => {
             setShowCreatePresence(false);
             router.push(`/agents/${p.id}`);
@@ -385,6 +388,5 @@ export default function PresencePage() {
         />
       )}
     </div>
-    </ProjectGate>
   );
 }

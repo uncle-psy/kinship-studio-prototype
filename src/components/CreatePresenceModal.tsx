@@ -25,9 +25,10 @@ function handleError(h: string): string | null {
 interface Props {
   onClose: () => void;
   onCreate: (presence: Presence) => void;
+  projectId?: string;
 }
 
-export function CreatePresenceModal({ onClose, onCreate }: Props) {
+export function CreatePresenceModal({ onClose, onCreate, projectId }: Props) {
   const [name, setName] = useState("");
   const [handle, setHandle] = useState("");
   const [handleTouched, setHandleTouched] = useState(false);
@@ -66,6 +67,7 @@ export function CreatePresenceModal({ onClose, onCreate }: Props) {
           name: name.trim(),
           handle: handle.trim(),
           briefDescription: briefDescription.trim(),
+          projectId,
         }),
       });
       if (!res.ok) {
