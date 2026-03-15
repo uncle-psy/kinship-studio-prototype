@@ -7,14 +7,6 @@ import { Icon } from "@iconify/react";
 
 const navSections = [
   {
-    label: "Assets",
-    items: [
-      { href: "/assets", icon: "lucide:library", label: "Library", badge: "63" },
-      { href: "/assets/upload", icon: "lucide:upload-cloud", label: "Upload" },
-      { href: "/packs", icon: "lucide:package", label: "Asset Packs", tag: "NEW" },
-    ],
-  },
-  {
     label: "AGENTS",
     items: [
       { href: "/presence", icon: "lucide:user-round", label: "Presence" },
@@ -30,7 +22,10 @@ const navSections = [
   {
     label: "Experiences",
     items: [
-      { href: "/games", icon: "lucide:compass", label: "Experiences" },
+      { href: "/experiences", icon: "lucide:compass", label: "Experiences" },
+      { href: "/assets", icon: "lucide:library", label: "Library", badge: "63" },
+      { href: "/assets/upload", icon: "lucide:upload-cloud", label: "Upload" },
+      { href: "/packs", icon: "lucide:package", label: "Asset Packs", tag: "NEW" },
     ],
   },
 ];

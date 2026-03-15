@@ -5,7 +5,7 @@ import Link from "next/link";
 export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 h-[60px] bg-header border-b border-card-border flex items-center justify-between px-6 z-50">
-      <Link href="/games" className="flex items-center gap-2">
+      <Link href="/experiences" className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-amber-700 flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
             <path d="M12 2L2 7l10 5 10-5-10-5z" />
