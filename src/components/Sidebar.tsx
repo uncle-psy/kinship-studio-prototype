@@ -24,6 +24,7 @@ const navSections = [
       { href: "/align", icon: "lucide:workflow", label: "Align" },
       { href: "/vibes", icon: "lucide:activity", label: "Vibes" },
       { href: "/offerings", icon: "lucide:store", label: "Offerings" },
+      { href: "/coins", icon: "lucide:coins", label: "Coins" },
     ],
   },
   {
