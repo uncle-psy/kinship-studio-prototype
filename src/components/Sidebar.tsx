@@ -22,7 +22,7 @@ const navSections = [
       { href: "/prompts", icon: "lucide:message-square-code", label: "Instruct" },
       { href: "/empower", icon: "lucide:plug-2", label: "Empower" },
       { href: "/align", icon: "lucide:workflow", label: "Align" },
-      { href: "/progress", icon: "lucide:activity", label: "Vibes" },
+      { href: "/vibes", icon: "lucide:activity", label: "Vibes" },
       { href: "/offerings", icon: "lucide:store", label: "Offerings" },
     ],
   },
