@@ -73,11 +73,6 @@ const INITIAL_PROJECTS: Project[] = [
   { id: "p5", name: "Vet's Visions",  codeName: "vets-visions",   description: "Veteran wellness and storytelling platform",     visibility: "private", owner: "Taylor Wong",    createdAt: "Mar 2026", team: ["Taylor Wong"], status: "active" },
 ];
 
-const INITIAL_EXPERIENCES = [
-  { id: "e1", name: "Ocean Explorers",      description: "Deep sea adventure with marine biology", owner: "Maya Rodriguez", createdAt: "Feb 2026", project: "Mapshifting" },
-  { id: "e2", name: "Time Travelers Guild", description: "Collaborative history exploration",       owner: "Alex Chen",      createdAt: "Nov 2024", project: "Mapshifting" },
-];
-
 const TYPE_COLORS: Record<string, string> = {
   "knowledge-base": "#3b82f6",
   "experience":     "#f59e0b",
@@ -220,7 +215,7 @@ export default function PlatformSettingsPage() {
 
   // ── Projects ──
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
-  const [experiences] = useState(INITIAL_EXPERIENCES);
+
   const [showNewProject, setShowNewProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectCodeName, setNewProjectCodeName] = useState("");
@@ -1157,39 +1152,6 @@ export default function PlatformSettingsPage() {
               </div>
             );
           })}
-        </div>
-
-        {/* ── Experiences ── */}
-        <div className="mb-5">
-          <h2 className="text-xl font-bold text-white">Experiences</h2>
-          <p className="text-muted text-sm mt-0.5">Game experiences within your projects</p>
-        </div>
-
-        <div className="bg-card border border-card-border rounded-xl overflow-hidden mb-8">
-          <div className="px-5 py-3 border-b border-card-border grid grid-cols-[1fr_auto_auto] gap-4">
-            <p className="text-xs font-semibold text-muted uppercase tracking-wider">Experience</p>
-            <p className="text-xs font-semibold text-muted uppercase tracking-wider w-44 text-center">Project</p>
-            <p className="text-xs font-semibold text-muted uppercase tracking-wider w-32 text-right">Owner</p>
-          </div>
-
-          {experiences.map((exp) => (
-            <div
-              key={exp.id}
-              className="px-5 py-4 border-b border-card-border last:border-0 grid grid-cols-[1fr_auto_auto] gap-4 items-center hover:bg-white/[0.02] transition-colors"
-            >
-              <div>
-                <p className="text-sm font-medium text-white">{exp.name}</p>
-                <p className="text-xs text-muted mt-0.5">{exp.description}</p>
-                <p className="text-xs text-muted/50 mt-0.5">Created {exp.createdAt}</p>
-              </div>
-              <div className="w-44 flex justify-center">
-                <span className="text-xs font-medium px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20">
-                  {exp.project}
-                </span>
-              </div>
-              <p className="w-32 text-xs text-muted text-right">{exp.owner}</p>
-            </div>
-          ))}
         </div>
 
         {/* Visibility legend */}
