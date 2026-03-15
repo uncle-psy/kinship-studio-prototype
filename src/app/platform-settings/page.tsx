@@ -62,15 +62,20 @@ const INITIAL_APPROVALS = [
   { id: "a2", type: "experience",     typeLabel: "Experience",     name: "Ancient Civilizations Quest", submittedBy: "Maya Rodriguez", date: "Mar 6, 2026",  status: "pending" },
   { id: "a3", type: "actor",          typeLabel: "Actor",          name: "Professor Aldric",            submittedBy: "Alex Chen",      date: "Mar 4, 2026",  status: "pending" },
   { id: "a4", type: "prompt",         typeLabel: "System Prompt",  name: "Socratic Tutor v2",           submittedBy: "Taylor Wong",    date: "Mar 7, 2026",  status: "pending" },
-  { id: "a5", type: "project",        typeLabel: "Project",        name: "Ocean Explorers",             submittedBy: "Maya Rodriguez", date: "Mar 6, 2026",  status: "pending" },
+  { id: "a5", type: "experience",     typeLabel: "Experience",     name: "Ocean Explorers",             submittedBy: "Maya Rodriguez", date: "Mar 6, 2026",  status: "pending" },
   { id: "a6", type: "knowledge-base", typeLabel: "Knowledge Base", name: "Marine Biology v1",           submittedBy: "Taylor Wong",    date: "Mar 3, 2026",  status: "approved" },
   { id: "a7", type: "actor",          typeLabel: "Actor",          name: "The Cartographer",            submittedBy: "Jordan Kim",     date: "Mar 1, 2026",  status: "approved" },
 ];
 
 const INITIAL_PROJECTS: Project[] = [
-  { id: "p1", name: "Mapshifting",          description: "Interactive map-based exploration game", visibility: "private", owner: "Jordan Kim",     createdAt: "Jan 2024" },
-  { id: "p2", name: "Ocean Explorers",      description: "Deep sea adventure with marine biology", visibility: "pending", owner: "Maya Rodriguez", createdAt: "Feb 2026" },
-  { id: "p3", name: "Time Travelers Guild", description: "Collaborative history exploration",       visibility: "public",  owner: "Alex Chen",      createdAt: "Nov 2024" },
+  { id: "p1", name: "Mapshifting",    codeName: "mapshifting",    description: "Interactive map-based exploration game",          visibility: "private", owner: "Jordan Kim",     createdAt: "Jan 2024", team: ["Jordan Kim", "Alex Chen"] },
+  { id: "p4", name: "Money Maker",    codeName: "money-maker",    description: "Financial literacy through interactive gameplay", visibility: "private", owner: "Jordan Kim",     createdAt: "Mar 2026", team: ["Jordan Kim"] },
+  { id: "p5", name: "Vet's Visions",  codeName: "vets-visions",   description: "Veteran wellness and storytelling platform",     visibility: "private", owner: "Taylor Wong",    createdAt: "Mar 2026", team: ["Taylor Wong"] },
+];
+
+const INITIAL_EXPERIENCES = [
+  { id: "e1", name: "Ocean Explorers",      description: "Deep sea adventure with marine biology", owner: "Maya Rodriguez", createdAt: "Feb 2026", project: "Mapshifting" },
+  { id: "e2", name: "Time Travelers Guild", description: "Collaborative history exploration",       owner: "Alex Chen",      createdAt: "Nov 2024", project: "Mapshifting" },
 ];
 
 const TYPE_COLORS: Record<string, string> = {
@@ -97,10 +102,12 @@ type Visibility = "secret" | "private" | "pending" | "public";
 interface Project {
   id: string;
   name: string;
+  codeName: string;
   description: string;
   visibility: Visibility;
   owner: string;
   createdAt: string;
+  team: string[];
 }
 
 const TABS: { id: Tab; label: string; icon: string; danger?: boolean }[] = [
@@ -210,6 +217,13 @@ export default function PlatformSettingsPage() {
 
   // ── Projects ──
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  const [experiences] = useState(INITIAL_EXPERIENCES);
+  const [showNewProject, setShowNewProject] = useState(false);
+  const [newProjectName, setNewProjectName] = useState("");
+  const [newProjectCodeName, setNewProjectCodeName] = useState("");
+  const [newProjectDesc, setNewProjectDesc] = useState("");
+  const [newProjectTeam, setNewProjectTeam] = useState("");
+  const [newProjectSaving, setNewProjectSaving] = useState(false);
 
   const flashTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -292,6 +306,34 @@ export default function PlatformSettingsPage() {
     ]);
     setInviteEmail("");
     setShowInvite(false);
+  }
+
+  function handleCreateProject() {
+    if (!newProjectName.trim()) return;
+    setNewProjectSaving(true);
+    setTimeout(() => {
+      const codeName = newProjectCodeName.trim() || newProjectName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const teamMembers = newProjectTeam.trim() ? newProjectTeam.split(",").map((t) => t.trim()).filter(Boolean) : ["Jordan Kim"];
+      setProjects((prev) => [
+        ...prev,
+        {
+          id: `p${Date.now()}`,
+          name: newProjectName.trim(),
+          codeName,
+          description: newProjectDesc.trim() || "No description",
+          visibility: "private" as Visibility,
+          owner: teamMembers[0],
+          createdAt: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+          team: teamMembers,
+        },
+      ]);
+      setNewProjectName("");
+      setNewProjectCodeName("");
+      setNewProjectDesc("");
+      setNewProjectTeam("");
+      setNewProjectSaving(false);
+      setShowNewProject(false);
+    }, 600);
   }
 
   const pendingCount = approvals.filter((a) => a.status === "pending").length;
@@ -973,9 +1015,22 @@ export default function PlatformSettingsPage() {
   function renderProjects() {
     return (
       <div>
-        <SectionHeader title="Projects" subtitle="Manage project visibility and approve public requests" />
+        {/* ── Projects ── */}
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h2 className="text-xl font-bold text-white">Projects</h2>
+            <p className="text-muted text-sm mt-0.5">Manage project visibility and approve public requests</p>
+          </div>
+          <button
+            onClick={() => setShowNewProject(true)}
+            className="bg-accent hover:bg-accent-dark text-white font-semibold px-5 py-2 rounded-full transition-colors flex items-center gap-2 text-sm"
+          >
+            <Icon icon="lucide:plus" width={15} height={15} />
+            New Project
+          </button>
+        </div>
 
-        <div className="bg-card border border-card-border rounded-xl overflow-hidden mb-5">
+        <div className="bg-card border border-card-border rounded-xl overflow-hidden mb-8">
           <div className="px-5 py-3 border-b border-card-border grid grid-cols-[1fr_auto_auto] gap-4">
             <p className="text-xs font-semibold text-muted uppercase tracking-wider">Project</p>
             <p className="text-xs font-semibold text-muted uppercase tracking-wider w-44 text-center">Visibility</p>
@@ -990,9 +1045,15 @@ export default function PlatformSettingsPage() {
                 className="px-5 py-4 border-b border-card-border last:border-0 grid grid-cols-[1fr_auto_auto] gap-4 items-center hover:bg-white/[0.02] transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-white">{project.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-white">{project.name}</p>
+                    <span className="text-xs font-mono text-accent/60">@{project.codeName}</span>
+                  </div>
                   <p className="text-xs text-muted mt-0.5">{project.description}</p>
-                  <p className="text-xs text-muted/50 mt-0.5">by {project.owner} · Created {project.createdAt}</p>
+                  <p className="text-xs text-muted/50 mt-0.5">
+                    by {project.owner} · Created {project.createdAt}
+                    {project.team.length > 1 && ` · Team: ${project.team.join(", ")}`}
+                  </p>
                 </div>
 
                 <div className="w-44 flex justify-center">
@@ -1033,6 +1094,39 @@ export default function PlatformSettingsPage() {
           })}
         </div>
 
+        {/* ── Experiences ── */}
+        <div className="mb-5">
+          <h2 className="text-xl font-bold text-white">Experiences</h2>
+          <p className="text-muted text-sm mt-0.5">Game experiences within your projects</p>
+        </div>
+
+        <div className="bg-card border border-card-border rounded-xl overflow-hidden mb-8">
+          <div className="px-5 py-3 border-b border-card-border grid grid-cols-[1fr_auto_auto] gap-4">
+            <p className="text-xs font-semibold text-muted uppercase tracking-wider">Experience</p>
+            <p className="text-xs font-semibold text-muted uppercase tracking-wider w-44 text-center">Project</p>
+            <p className="text-xs font-semibold text-muted uppercase tracking-wider w-32 text-right">Owner</p>
+          </div>
+
+          {experiences.map((exp) => (
+            <div
+              key={exp.id}
+              className="px-5 py-4 border-b border-card-border last:border-0 grid grid-cols-[1fr_auto_auto] gap-4 items-center hover:bg-white/[0.02] transition-colors"
+            >
+              <div>
+                <p className="text-sm font-medium text-white">{exp.name}</p>
+                <p className="text-xs text-muted mt-0.5">{exp.description}</p>
+                <p className="text-xs text-muted/50 mt-0.5">Created {exp.createdAt}</p>
+              </div>
+              <div className="w-44 flex justify-center">
+                <span className="text-xs font-medium px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20">
+                  {exp.project}
+                </span>
+              </div>
+              <p className="w-32 text-xs text-muted text-right">{exp.owner}</p>
+            </div>
+          ))}
+        </div>
+
         {/* Visibility legend */}
         <div>
           <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Visibility Levels</p>
@@ -1053,6 +1147,99 @@ export default function PlatformSettingsPage() {
             ))}
           </div>
         </div>
+
+        {/* ── New Project Modal ── */}
+        {showNewProject && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-card border border-card-border rounded-2xl w-full max-w-lg shadow-2xl">
+              <div className="flex items-center justify-between p-6 border-b border-card-border">
+                <div>
+                  <h2 className="text-xl font-bold text-white">New Project</h2>
+                  <p className="text-sm text-muted mt-1">Create a new project workspace</p>
+                </div>
+                <button
+                  onClick={() => setShowNewProject(false)}
+                  className="text-muted hover:text-white transition-colors"
+                >
+                  <Icon icon="lucide:x" width={20} height={20} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    Project Name <span className="text-accent">*</span>
+                  </label>
+                  <input
+                    autoFocus
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    placeholder="e.g. My New Game"
+                    className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    Code Name
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-sm">@</span>
+                    <input
+                      value={newProjectCodeName}
+                      onChange={(e) => setNewProjectCodeName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                      placeholder="auto-generated-from-name"
+                      className="w-full bg-input border border-card-border rounded-xl pl-8 pr-4 py-3 text-foreground font-mono text-sm placeholder:text-muted focus:outline-none focus:border-accent/50"
+                    />
+                  </div>
+                  <p className="text-xs text-muted mt-1">Lowercase letters, numbers, and hyphens only</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={newProjectDesc}
+                    onChange={(e) => setNewProjectDesc(e.target.value)}
+                    placeholder="What is this project about?"
+                    rows={3}
+                    className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    Team Members
+                  </label>
+                  <input
+                    value={newProjectTeam}
+                    onChange={(e) => setNewProjectTeam(e.target.value)}
+                    placeholder="e.g. Jordan Kim, Alex Chen"
+                    className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
+                  />
+                  <p className="text-xs text-muted mt-1">Comma-separated names. First person is the project owner.</p>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    onClick={handleCreateProject}
+                    disabled={!newProjectName.trim() || newProjectSaving}
+                    className="flex-1 bg-accent hover:bg-accent-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-xl transition-colors"
+                  >
+                    {newProjectSaving ? "Creating…" : "Create Project"}
+                  </button>
+                  <button
+                    onClick={() => setShowNewProject(false)}
+                    className="px-5 py-2.5 border border-card-border rounded-xl text-muted hover:text-white hover:border-white/30 transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
