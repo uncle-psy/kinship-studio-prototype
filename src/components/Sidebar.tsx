@@ -23,6 +23,7 @@ const navSections = [
       { href: "/empower", icon: "lucide:plug-2", label: "Empower" },
       { href: "/align", icon: "lucide:workflow", label: "Align" },
       { href: "/progress", icon: "lucide:activity", label: "Vibes" },
+      { href: "/offerings", icon: "lucide:store", label: "Offerings" },
     ],
   },
   {
