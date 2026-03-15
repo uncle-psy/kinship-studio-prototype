@@ -9,7 +9,7 @@ const navSections = [
   {
     label: "AGENTS",
     items: [
-      { href: "/presence", icon: "lucide:user-round", label: "Presence" },
+      { href: "/agents", icon: "lucide:user-round", label: "Agents" },
       { href: "/knowledge", icon: "lucide:brain", label: "Inform" },
       { href: "/prompts", icon: "lucide:message-square-code", label: "Instruct" },
       { href: "/empower", icon: "lucide:plug-2", label: "Empower" },
