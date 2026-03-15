@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { CreatePromptModal } from "@/components/CreatePromptModal";
+import { ProjectGate } from "@/components/ProjectGate";
 
 interface Prompt {
   id: string;
@@ -48,6 +49,7 @@ export default function PromptsPage() {
   );
 
   return (
+    <ProjectGate sectionName="Prompts" icon="lucide:message-square-code">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -193,5 +195,6 @@ export default function PromptsPage() {
         />
       )}
     </div>
+    </ProjectGate>
   );
 }

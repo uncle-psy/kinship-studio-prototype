@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
+import { useProject } from "@/lib/project-context";
 
 const navSections = [
   {
@@ -30,11 +31,10 @@ const navSections = [
   },
 ];
 
-const projects = ["Mapshifting"];
-
 export function Sidebar() {
   const pathname = usePathname();
   const [projectsOpen, setProjectsOpen] = useState(true);
+  const { projects, activeProject, setActiveProject } = useProject();
 
   return (
     <aside className="fixed left-0 top-[60px] w-[220px] h-[calc(100vh-60px)] bg-sidebar border-r border-card-border overflow-y-auto py-4 px-3">
@@ -49,7 +49,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Platform Settings (moved up, below platform name) */}
+      {/* Platform Settings */}
       <div className="mb-4">
         <ul>
           <li>
@@ -88,14 +88,29 @@ export function Sidebar() {
         </button>
         {projectsOpen && (
           <ul className="space-y-0.5">
-            {projects.map((name) => (
-              <li key={name}>
-                <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer">
-                  <Icon icon="lucide:folder" width={18} height={18} className="text-white" />
-                  <span className="flex-1">{name}</span>
-                </div>
-              </li>
-            ))}
+            {projects.map((project) => {
+              const isActive = activeProject.id === project.id;
+              return (
+                <li key={project.id}>
+                  <button
+                    onClick={() => setActiveProject(project)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      isActive
+                        ? "bg-accent/20 text-accent"
+                        : "text-white/70 hover:bg-white/[0.06] hover:text-white"
+                    }`}
+                  >
+                    <Icon
+                      icon="lucide:folder"
+                      width={18}
+                      height={18}
+                      className={isActive ? "text-accent" : "text-white"}
+                    />
+                    <span className="flex-1 text-left">{project.name}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

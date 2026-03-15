@@ -1,7 +1,10 @@
 "use client";
 
+import { ProjectGate } from "@/components/ProjectGate";
+
 export default function UploadAssetPage() {
   return (
+    <ProjectGate sectionName="Upload" icon="lucide:upload-cloud">
     <div>
       {/* Breadcrumb */}
       <div className="text-sm text-muted mb-2">
@@ -265,5 +268,6 @@ export default function UploadAssetPage() {
         </div>
       </div>
     </div>
+    </ProjectGate>
   );
 }

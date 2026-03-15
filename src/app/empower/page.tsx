@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { ProjectGate } from "@/components/ProjectGate";
 
 type Tool = {
   id: string;
@@ -423,6 +424,7 @@ export default function EmpowerPage() {
   };
 
   return (
+    <ProjectGate sectionName="Tools" icon="lucide:plug-2">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -486,5 +488,6 @@ export default function EmpowerPage() {
         />
       )}
     </div>
+    </ProjectGate>
   );
 }

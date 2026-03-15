@@ -1,3 +1,7 @@
+"use client";
+
+import { ProjectGate } from "@/components/ProjectGate";
+
 export default function PacksPage() {
   const packs = [
     { name: "Forest Kit", details: "6 tiles, 8 objects, 4 sprites, 6 audio", count: 24 },
@@ -6,6 +10,7 @@ export default function PacksPage() {
   ];
 
   return (
+    <ProjectGate sectionName="Asset Packs" icon="lucide:package">
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -53,5 +58,6 @@ export default function PacksPage() {
         ))}
       </div>
     </div>
+    </ProjectGate>
   );
 }

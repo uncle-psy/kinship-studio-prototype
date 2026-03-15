@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { CreatePresenceModal } from "@/components/CreatePresenceModal";
+import { ProjectGate } from "@/components/ProjectGate";
 import type { Presence } from "@/lib/types";
 
 // Modal to choose between Presence (supervisor) or Agent (worker)
@@ -205,6 +206,7 @@ export default function PresencePage() {
   );
 
   return (
+    <ProjectGate sectionName="Agents" icon="lucide:user-round">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -383,5 +385,6 @@ export default function PresencePage() {
         />
       )}
     </div>
+    </ProjectGate>
   );
 }

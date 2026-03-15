@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { CreateKBModal } from "@/components/CreateKBModal";
+import { ProjectGate } from "@/components/ProjectGate";
 
 interface KnowledgeBase {
   id: string;
@@ -43,6 +44,7 @@ export default function KnowledgePage() {
   );
 
   return (
+    <ProjectGate sectionName="Knowledge Bases" icon="lucide:brain">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -177,5 +179,6 @@ export default function KnowledgePage() {
         />
       )}
     </div>
+    </ProjectGate>
   );
 }

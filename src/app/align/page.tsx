@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { ProjectGate } from "@/components/ProjectGate";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -594,6 +595,7 @@ export default function AlignPage() {
   }
 
   return (
+    <ProjectGate sectionName="Alignments" icon="lucide:workflow">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -660,5 +662,6 @@ export default function AlignPage() {
         />
       )}
     </div>
+    </ProjectGate>
   );
 }

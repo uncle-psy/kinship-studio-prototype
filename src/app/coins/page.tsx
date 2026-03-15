@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { nanoid } from "nanoid";
+import { ProjectGate } from "@/components/ProjectGate";
 
 /* ─── Types ─────────────────────────────────────────────────────── */
 
@@ -430,6 +431,7 @@ export default function CoinsPage() {
   }
 
   return (
+    <ProjectGate sectionName="Coins" icon="lucide:coins">
     <div>
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
@@ -475,5 +477,6 @@ export default function CoinsPage() {
       {/* Modal */}
       {showCreate && <CreateCoinModal onClose={() => setShowCreate(false)} onCreate={handleCreate} />}
     </div>
+    </ProjectGate>
   );
 }

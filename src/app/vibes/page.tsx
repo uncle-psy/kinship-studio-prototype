@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { ProjectGate } from "@/components/ProjectGate";
 
 // ── Scope metadata ──────────────────────────────────────────────────────────
 const SCOPE_META: Record<string, { label: string; icon: string; color: string; desc: string }> = {
@@ -526,6 +527,7 @@ export default function VibesPage() {
   ];
 
   return (
+    <ProjectGate sectionName="Vibes" icon="lucide:activity">
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -809,5 +811,6 @@ export default function VibesPage() {
         </div>
       )}
     </div>
+    </ProjectGate>
   );
 }

@@ -1,5 +1,10 @@
+"use client";
+
+import { ProjectGate } from "@/components/ProjectGate";
+
 export default function GamesPage() {
   return (
+    <ProjectGate sectionName="Experiences" icon="lucide:compass">
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -49,5 +54,6 @@ export default function GamesPage() {
         </div>
       </div>
     </div>
+    </ProjectGate>
   );
 }
