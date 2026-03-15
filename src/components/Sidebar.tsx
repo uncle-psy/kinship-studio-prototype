@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { useProject } from "@/lib/project-context";
 
@@ -33,6 +33,7 @@ const navSections = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [projectsOpen, setProjectsOpen] = useState(true);
   const { projects, activeProject, setActiveProject } = useProject();
 
@@ -93,7 +94,7 @@ export function Sidebar() {
               return (
                 <li key={project.id}>
                   <button
-                    onClick={() => setActiveProject(project)}
+                    onClick={() => { setActiveProject(project); if (pathname.startsWith("/platform-settings")) router.push("/agents"); }}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
                         ? "bg-accent/20 text-accent"
