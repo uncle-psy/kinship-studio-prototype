@@ -160,7 +160,13 @@ function SidebarCard({ title, icon, children, defaultOpen = false }: {
 }
 
 // ─── Main page ────────────────────────────────────────────────────────────────
-export default function PresenceDetailPage() {
+export default function PresenceDetailPage({
+  backHref = "/presence",
+  backLabel = "Presence",
+}: {
+  backHref?: string;
+  backLabel?: string;
+}) {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -223,7 +229,7 @@ export default function PresenceDetailPage() {
   const fetchPresence = useCallback(async () => {
     try {
       const res = await fetch(`/api/presence/${id}`);
-      if (!res.ok) { router.push("/presence"); return; }
+      if (!res.ok) { router.push(backHref); return; }
       const data = await res.json();
       const p: Presence = data.presence;
       setPresence(p);
@@ -387,7 +393,7 @@ export default function PresenceDetailPage() {
   // ── Delete ──
   async function handleDelete() {
     await fetch(`/api/presence/${id}`, { method: "DELETE" });
-    router.push("/presence");
+    router.push(backHref);
   }
 
   if (loading) {
@@ -403,8 +409,8 @@ export default function PresenceDetailPage() {
     <div>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted mb-4">
-        <button onClick={() => router.push("/presence")} className="hover:text-accent transition-colors">
-          Presence
+        <button onClick={() => router.push(backHref)} className="hover:text-accent transition-colors">
+          {backLabel}
         </button>
         <Icon icon="lucide:chevron-right" width={14} height={14} />
         <span className="text-foreground">{presence.name}</span>
