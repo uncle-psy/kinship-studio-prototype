@@ -131,7 +131,9 @@ export async function createPresence(
   name: string,
   briefDescription = "",
   handle = "",
-  projectId?: string
+  projectId?: string,
+  agentLevel: import("./types").AgentLevel = "presence",
+  agentRole?: string
 ): Promise<Presence> {
   const kv = getStore();
   const { nanoid } = await import("nanoid");
@@ -146,8 +148,12 @@ export async function createPresence(
     briefDescription,
     description: "",
     backstory: "",
+    agentLevel,
+    agentRole,
     knowledgeBaseIds: [],
     knowledgeBaseNames: [],
+    primitiveIds: [],
+    gatheringIds: [],
     signals: [],
     createdAt: now,
     updatedAt: now,

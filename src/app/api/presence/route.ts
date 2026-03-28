@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { name, briefDescription, handle, projectId } = await request.json();
+  const { name, briefDescription, handle, projectId, agentLevel, agentRole } = await request.json();
 
   if (!name?.trim()) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -34,7 +34,9 @@ export async function POST(request: Request) {
     name.trim(),
     (briefDescription ?? "").trim(),
     rawHandle,
-    projectId
+    projectId,
+    agentLevel || "presence",
+    agentRole
   );
   return NextResponse.json({ presence }, { status: 201 });
 }

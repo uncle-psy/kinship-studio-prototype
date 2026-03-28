@@ -11,11 +11,21 @@ const navSections = [
     label: "AGENTS",
     items: [
       { href: "/agents", icon: "lucide:user-round", label: "Agents" },
-      { href: "/knowledge", icon: "lucide:brain", label: "Inform" },
-      { href: "/prompts", icon: "lucide:message-square-code", label: "Instruct" },
-      { href: "/empower", icon: "lucide:plug-2", label: "Empower" },
-      { href: "/align", icon: "lucide:workflow", label: "Align" },
-      { href: "/vibes", icon: "lucide:activity", label: "Vibes" },
+    ],
+  },
+  {
+    label: "CLARITY PROCESS",
+    items: [
+      { href: "/knowledge", icon: "lucide:brain", label: "Inform", hint: "Knowledge & RAG" },
+      { href: "/prompts", icon: "lucide:message-square-code", label: "Instruct", hint: "Behavior & Chains" },
+      { href: "/empower", icon: "lucide:plug-2", label: "Empower", hint: "Tools & MCP" },
+      { href: "/align", icon: "lucide:workflow", label: "Align", hint: "Orchestration" },
+    ],
+  },
+  {
+    label: "GOVERNANCE",
+    items: [
+      { href: "/vibes", icon: "lucide:activity", label: "Vibes", hint: "Safety & Norms" },
       { href: "/offerings", icon: "lucide:store", label: "Offerings" },
       { href: "/coins", icon: "lucide:coins", label: "Coins" },
     ],
@@ -146,12 +156,12 @@ export function Sidebar() {
                       className={isActive ? "text-accent" : "text-white"}
                     />
                     <span className="flex-1">{item.label}</span>
-                    {item.badge && (
+                    {"badge" in item && item.badge && (
                       <span className="bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full">
                         {item.badge}
                       </span>
                     )}
-                    {item.tag && (
+                    {"tag" in item && item.tag && (
                       <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
                         {item.tag}
                       </span>
