@@ -91,54 +91,75 @@ function getStore(): KVStore {
 
 const SEED_PROJECTS: Project[] = [
   {
-    id: "proj_mapshifting",
-    name: "Mapshifting",
-    codeName: "mapshifting",
-    description: "Interactive map-based exploration game",
-    visibility: "private",
-    owner: "Jordan Kim",
-    createdAt: new Date("2024-01-15").toISOString(),
-    updatedAt: new Date("2024-01-15").toISOString(),
-    team: ["Jordan Kim", "Alex Chen"],
+    id: "proj_terra-ai",
+    name: "TerraAI",
+    codeName: "terra-ai",
+    description: "Predictive AI for climate-adaptive agriculture — reducing crop losses for smallholder farmers while building regenerative food systems",
+    visibility: "public",
+    owner: "Dr. Amara Okafor",
+    createdAt: new Date("2025-06-15").toISOString(),
+    updatedAt: new Date("2026-03-28").toISOString(),
+    team: ["Dr. Amara Okafor", "Kofi Mensah", "Lina Voss"],
     status: "active",
   },
   {
-    id: "proj_money-maker",
-    name: "Money Maker",
-    codeName: "money-maker",
-    description: "Financial literacy through interactive gameplay",
-    visibility: "private",
-    owner: "Jordan Kim",
-    createdAt: new Date("2026-03-01").toISOString(),
-    updatedAt: new Date("2026-03-01").toISOString(),
-    team: ["Jordan Kim"],
+    id: "proj_equilend",
+    name: "EquiLend",
+    codeName: "equilend",
+    description: "Decentralized micro-lending protocol providing fair-rate loans to underbanked communities with on-chain transparency and community governance",
+    visibility: "public",
+    owner: "Maya Rodriguez",
+    createdAt: new Date("2025-04-01").toISOString(),
+    updatedAt: new Date("2026-03-20").toISOString(),
+    team: ["Maya Rodriguez", "Daniel Osei", "Priya Patel"],
     status: "active",
   },
   {
-    id: "proj_vets-visions",
-    name: "Vet's Visions",
-    codeName: "vets-visions",
-    description: "Veteran wellness and storytelling platform",
-    visibility: "private",
-    owner: "Taylor Wong",
-    createdAt: new Date("2026-03-01").toISOString(),
-    updatedAt: new Date("2026-03-01").toISOString(),
-    team: ["Taylor Wong"],
+    id: "proj_helix-health",
+    name: "Helix Health",
+    codeName: "helix-health",
+    description: "Decentralized telehealth network pairing AI diagnostics with human physicians to bring specialist care to underserved rural communities",
+    visibility: "public",
+    owner: "Dr. James Whitfield",
+    createdAt: new Date("2025-08-10").toISOString(),
+    updatedAt: new Date("2026-04-02").toISOString(),
+    team: ["Dr. James Whitfield", "Sarah Chen", "Marcus Rivera"],
+    status: "active",
+  },
+  {
+    id: "proj_civicchain",
+    name: "CivicChain",
+    codeName: "civicchain",
+    description: "On-chain transparent budgeting and governance tooling for municipalities — making every public dollar trackable and every decision auditable",
+    visibility: "public",
+    owner: "GovTech Alliance",
+    createdAt: new Date("2025-09-01").toISOString(),
+    updatedAt: new Date("2026-03-15").toISOString(),
+    team: ["GovTech Alliance", "Elena Vasquez", "Tom Briggs"],
     status: "active",
   },
 ];
 
+const SEED_VERSION = "v2-kinship-duna";
 let seeded = false;
 
 async function ensureSeeded() {
   if (seeded) return;
   const kv = getStore();
-  const ids = await kv.smembers("project:list");
-  if (ids.length === 0) {
+  const currentVersion = await kv.get<string>("seed:project:version");
+  if (currentVersion !== SEED_VERSION) {
+    // Clear old project data
+    const oldIds = await kv.smembers("project:list");
+    for (const id of oldIds) {
+      await kv.del(`project:${id}`);
+      await kv.srem("project:list", id);
+    }
+    // Seed new projects
     for (const proj of SEED_PROJECTS) {
       await kv.set(`project:${proj.id}`, proj);
       await kv.sadd("project:list", proj.id);
     }
+    await kv.set("seed:project:version", SEED_VERSION);
   }
   seeded = true;
 }

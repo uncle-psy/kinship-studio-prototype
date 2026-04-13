@@ -92,9 +92,107 @@ function getStore(): KVStore {
   return memoryKV;
 }
 
+// ─── Seed defaults ────────────────────────────────────────────────────────────
+
+const SEED_KBS: { kb: KnowledgeBase; items: KBItem[] }[] = [
+  {
+    kb: {
+      id: "kb_terra_climate",
+      name: "TerraAI Climate Intelligence",
+      namespace: "kb_terra_climate",
+      createdAt: new Date("2025-09-15").toISOString(),
+      itemCount: 5,
+      projectId: "proj_terra-ai",
+    },
+    items: [
+      { id: "ti1", name: "Sub-Saharan Crop Yield Dataset 2024-2026.csv", type: "file", status: "ingested", createdAt: new Date("2025-09-15").toISOString(), chunkCount: 342 },
+      { id: "ti2", name: "Satellite Imagery Analysis Protocols.pdf", type: "file", status: "ingested", createdAt: new Date("2025-10-01").toISOString(), chunkCount: 87 },
+      { id: "ti3", name: "Soil Health Restoration Metrics — 2,400 Hectares.md", type: "file", status: "ingested", createdAt: new Date("2025-11-20").toISOString(), chunkCount: 56 },
+      { id: "ti4", name: "Farmer Advisory Templates & Regional Guides", type: "ai-generated", status: "ingested", createdAt: new Date("2026-01-10").toISOString(), chunkCount: 124 },
+      { id: "ti5", name: "SE Asia Expansion — Vietnam, Cambodia, Myanmar Research", type: "ai-generated", status: "ingested", createdAt: new Date("2026-03-01").toISOString(), chunkCount: 203 },
+    ],
+  },
+  {
+    kb: {
+      id: "kb_equi_finance",
+      name: "EquiLend Financial Protocols",
+      namespace: "kb_equi_finance",
+      createdAt: new Date("2025-07-25").toISOString(),
+      itemCount: 4,
+      projectId: "proj_equilend",
+    },
+    items: [
+      { id: "ei1", name: "Lending Criteria & APR Cap Enforcement Rules.pdf", type: "file", status: "ingested", createdAt: new Date("2025-07-25").toISOString(), chunkCount: 64 },
+      { id: "ei2", name: "Community Fund Governance Charter.md", type: "file", status: "ingested", createdAt: new Date("2025-08-10").toISOString(), chunkCount: 38 },
+      { id: "ei3", name: "Repayment Analytics — $2.4M Portfolio Performance", type: "ai-generated", status: "ingested", createdAt: new Date("2025-12-01").toISOString(), chunkCount: 156 },
+      { id: "ei4", name: "Regulatory Compliance — Multi-Jurisdiction Framework.pdf", type: "file", status: "ingested", createdAt: new Date("2026-02-15").toISOString(), chunkCount: 92 },
+    ],
+  },
+  {
+    kb: {
+      id: "kb_helix_medical",
+      name: "Helix Health Medical Resources",
+      namespace: "kb_helix_medical",
+      createdAt: new Date("2025-11-10").toISOString(),
+      itemCount: 5,
+      projectId: "proj_helix-health",
+    },
+    items: [
+      { id: "hi1", name: "Telehealth Node Deployment Playbook.pdf", type: "file", status: "ingested", createdAt: new Date("2025-11-10").toISOString(), chunkCount: 78 },
+      { id: "hi2", name: "Appalachian Rural Health Statistics 2020-2026.csv", type: "file", status: "ingested", createdAt: new Date("2025-11-15").toISOString(), chunkCount: 215 },
+      { id: "hi3", name: "AI Diagnostic Accuracy Reports — Dermatology & Cardiology", type: "file", status: "ingested", createdAt: new Date("2026-01-05").toISOString(), chunkCount: 134 },
+      { id: "hi4", name: "Patient Outcome Tracking — 28,000 Residents", type: "ai-generated", status: "ingested", createdAt: new Date("2026-02-20").toISOString(), chunkCount: 189 },
+      { id: "hi5", name: "Insurance Reimbursement Models & Revenue Projections", type: "ai-generated", status: "ingested", createdAt: new Date("2026-03-10").toISOString(), chunkCount: 67 },
+    ],
+  },
+  {
+    kb: {
+      id: "kb_civic_governance",
+      name: "CivicChain Governance Records",
+      namespace: "kb_civic_governance",
+      createdAt: new Date("2025-12-05").toISOString(),
+      itemCount: 4,
+      projectId: "proj_civicchain",
+    },
+    items: [
+      { id: "ci1", name: "Burlington Transparent Budgeting Pilot — Full Report.pdf", type: "file", status: "ingested", createdAt: new Date("2025-12-05").toISOString(), chunkCount: 98 },
+      { id: "ci2", name: "Municipal Waste Reduction Analysis (22% Improvement).md", type: "file", status: "ingested", createdAt: new Date("2026-01-20").toISOString(), chunkCount: 45 },
+      { id: "ci3", name: "Citizen Engagement Metrics & Survey Data", type: "ai-generated", status: "ingested", createdAt: new Date("2026-02-10").toISOString(), chunkCount: 112 },
+      { id: "ci4", name: "On-Chain Budget Tracking — Smart Contract Specifications", type: "file", status: "ingested", createdAt: new Date("2026-03-01").toISOString(), chunkCount: 73 },
+    ],
+  },
+];
+
+const KB_SEED_VERSION = "v2-kinship-duna";
+let kbsSeeded = false;
+
+async function ensureKBsSeeded() {
+  if (kbsSeeded) return;
+  const kv = getStore();
+  const currentVersion = await kv.get<string>("seed:kb:version");
+  if (currentVersion !== KB_SEED_VERSION) {
+    // Clear old KB data
+    const oldIds = await kv.smembers("kb:list");
+    for (const id of oldIds) {
+      await kv.del(`kb:${id}`);
+      await kv.del(`kb:${id}:items`);
+      await kv.srem("kb:list", id);
+    }
+    // Seed new KBs
+    for (const { kb, items } of SEED_KBS) {
+      await kv.set(`kb:${kb.id}`, kb);
+      await kv.set(`kb:${kb.id}:items`, items);
+      await kv.sadd("kb:list", kb.id);
+    }
+    await kv.set("seed:kb:version", KB_SEED_VERSION);
+  }
+  kbsSeeded = true;
+}
+
 // --- Knowledge Base CRUD ---
 
 export async function listKnowledgeBases(projectId?: string): Promise<KnowledgeBase[]> {
+  await ensureKBsSeeded();
   const kv = getStore();
   const ids = await kv.smembers("kb:list");
   if (!ids || ids.length === 0) return [];
@@ -109,7 +207,7 @@ export async function listKnowledgeBases(projectId?: string): Promise<KnowledgeB
   }
 
   const filtered = projectId
-    ? kbs.filter((kb) => (kb.projectId || "proj_mapshifting") === projectId)
+    ? kbs.filter((kb) => (kb.projectId || "proj_terra-ai") === projectId)
     : kbs;
 
   filtered.sort(
@@ -122,6 +220,7 @@ export async function listKnowledgeBases(projectId?: string): Promise<KnowledgeB
 export async function getKnowledgeBase(
   id: string
 ): Promise<(KnowledgeBase & { items: KBItem[] }) | null> {
+  await ensureKBsSeeded();
   const kv = getStore();
   const data = await kv.get<KnowledgeBase>(`kb:${id}`);
   if (!data) return null;

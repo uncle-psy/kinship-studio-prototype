@@ -21,7 +21,7 @@ export function Header() {
         <button className="flex items-center gap-3 bg-white/[0.06] border border-card-border rounded-full px-4 py-1.5 hover:border-accent/50 transition-colors">
           <div className="text-left">
             <div className="text-sm font-medium text-white">Kinship Agents</div>
-            <div className="text-xs text-muted">1 experiences · 63 assets</div>
+            <div className="text-xs text-muted">4 projects · 7 agents</div>
           </div>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted ml-1">
             <path d="M6 9l6 6 6-6" />
