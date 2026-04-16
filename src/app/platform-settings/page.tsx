@@ -59,13 +59,13 @@ const INITIAL_USERS = [
 ];
 
 const INITIAL_APPROVALS = [
-  { id: "a1", type: "knowledge-base", typeLabel: "Knowledge Base", name: "World History KB",            submittedBy: "Alex Chen",      date: "Mar 5, 2026",  status: "pending" },
-  { id: "a2", type: "experience",     typeLabel: "Experience",     name: "Ancient Civilizations Quest", submittedBy: "Maya Rodriguez", date: "Mar 6, 2026",  status: "pending" },
-  { id: "a3", type: "actor",          typeLabel: "Actor",          name: "Professor Aldric",            submittedBy: "Alex Chen",      date: "Mar 4, 2026",  status: "pending" },
-  { id: "a4", type: "prompt",         typeLabel: "System Prompt",  name: "Socratic Tutor v2",           submittedBy: "Taylor Wong",    date: "Mar 7, 2026",  status: "pending" },
-  { id: "a5", type: "experience",     typeLabel: "Experience",     name: "Ocean Explorers",             submittedBy: "Maya Rodriguez", date: "Mar 6, 2026",  status: "pending" },
-  { id: "a6", type: "knowledge-base", typeLabel: "Knowledge Base", name: "Marine Biology v1",           submittedBy: "Taylor Wong",    date: "Mar 3, 2026",  status: "approved" },
-  { id: "a7", type: "actor",          typeLabel: "Actor",          name: "The Cartographer",            submittedBy: "Jordan Kim",     date: "Mar 1, 2026",  status: "approved" },
+  { id: "a1", type: "knowledge-base", typeLabel: "Knowledge Base", name: "VA Benefits Corpus v4",           submittedBy: "Rick Gage",       date: "Mar 5, 2026",  status: "pending" },
+  { id: "a2", type: "experience",     typeLabel: "Experience",     name: "Venice Boardwalk Series",         submittedBy: "Placemaking Op",  date: "Mar 6, 2026",  status: "pending" },
+  { id: "a3", type: "actor",          typeLabel: "Operator",       name: "Benefits Operator",               submittedBy: "Rick Gage",       date: "Mar 4, 2026",  status: "pending" },
+  { id: "a4", type: "prompt",         typeLabel: "System Prompt",  name: "Compassionate Feedback Coach v2", submittedBy: "CLW Education",   date: "Mar 7, 2026",  status: "pending" },
+  { id: "a5", type: "experience",     typeLabel: "Experience",     name: "Loving Manager Cohort",           submittedBy: "CLW Education",   date: "Mar 6, 2026",  status: "pending" },
+  { id: "a6", type: "knowledge-base", typeLabel: "Knowledge Base", name: "CLW Research Library",            submittedBy: "CLW Research",    date: "Mar 3, 2026",  status: "approved" },
+  { id: "a7", type: "actor",          typeLabel: "Executor",       name: "Peer Navigator Executor",         submittedBy: "Service Alliance",date: "Mar 1, 2026",  status: "approved" },
 ];
 
 
@@ -96,7 +96,7 @@ const TABS: { id: Tab; label: string; icon: string; danger?: boolean }[] = [
   { id: "presence",  label: "Presence",    icon: "lucide:user-round" },
   { id: "users",     label: "Users",       icon: "lucide:users" },
   { id: "approvals", label: "Approvals",   icon: "lucide:check-circle" },
-  { id: "projects",  label: "Projects",    icon: "lucide:folder-open" },
+  { id: "projects",  label: "Markets",     icon: "lucide:layout-grid" },
   { id: "danger",    label: "Danger Zone", icon: "lucide:triangle-alert", danger: true },
 ];
 
@@ -155,11 +155,11 @@ export default function PlatformSettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   // ── Identity ──
-  const [platformName, setPlatformName] = useState("Kinship Today");
-  const [platformHandle, setPlatformHandle] = useState("kinship_today");
+  const [platformName, setPlatformName] = useState("Kinship Action Markets");
+  const [platformHandle, setPlatformHandle] = useState("kinship_action_markets");
   const [handleError, setHandleError] = useState("");
-  const [description, setDescription] = useState("A platform for interactive knowledge experiences and living characters.");
-  const [platformIcon, setPlatformIcon] = useState("🌍");
+  const [description, setDescription] = useState("A platform for designing, deciding, and deploying Kinship Action Markets — aligning Objectives, Governance, Rewards, and Action in a single protocol.");
+  const [platformIcon, setPlatformIcon] = useState("📈");
   const [identitySaving, setIdentitySaving] = useState(false);
   const [identityFlash, setIdentityFlash] = useState(false);
 
@@ -451,7 +451,7 @@ export default function PlatformSettingsPage() {
               { label: "Actors",          value: String(allPresences.length),       icon: "lucide:user-round",     color: "#a855f7" },
               { label: "Knowledge Bases", value: String(allKBs.length),             icon: "lucide:brain",          color: "#3b82f6" },
               { label: "Signals Active",  value: `${enabledSignals.length} / ${ALL_SIGNALS.length}`, icon: "lucide:activity", color: "#22c55e" },
-              { label: "Projects",        value: String(projects.length),           icon: "lucide:folder-open",    color: "#f59e0b" },
+              { label: "Markets",         value: String(projects.length),           icon: "lucide:layout-grid",    color: "#f59e0b" },
               { label: "Tokens Used",     value: "24,891",                          icon: "lucide:zap",            color: "#ec4899" },
               { label: "API Calls",       value: "1,247",                           icon: "lucide:arrow-up-right", color: "#94a3b8" },
             ].map((m) => (
@@ -734,7 +734,7 @@ export default function PlatformSettingsPage() {
                 value={customSystemPrompt}
                 onChange={(e) => setCustomSystemPrompt(e.target.value)}
                 rows={6}
-                placeholder="e.g. You are an assistant on the Kinship Today platform. Be helpful, curious, and engaging. Always stay within the context of the platform's educational goals."
+                placeholder="e.g. You are the Studio assistant for Kinship Action Markets. Help Sponsors, Citizens, and Architects draft Objectives, Proposals, and Executor bundles. Stay within the platform's governance scope."
                 className="w-full bg-input border border-card-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50 resize-y font-mono"
               />
             )}
@@ -886,7 +886,7 @@ export default function PlatformSettingsPage() {
       { id: "experience",     label: "Experiences" },
       { id: "actor",          label: "Actors" },
       { id: "prompt",         label: "Prompts" },
-      { id: "project",        label: "Projects" },
+      { id: "project",        label: "Markets" },
     ];
 
     const APPROVAL_ICON: Record<string, string> = {

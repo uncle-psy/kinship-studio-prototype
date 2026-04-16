@@ -28,8 +28,8 @@ interface Coin {
 const SAMPLE_COINS: Coin[] = [
   {
     id: nanoid(),
-    name: "Kinship Token",
-    symbol: "KIN",
+    name: "Service Alliance Conviction",
+    symbol: "SAL",
     image: "",
     bondingCurve: { type: "power", y: 1.5 },
     dexThreshold: 500000,
@@ -39,8 +39,8 @@ const SAMPLE_COINS: Coin[] = [
   },
   {
     id: nanoid(),
-    name: "Vibe Coin",
-    symbol: "VIBE",
+    name: "Loving Workplace Credit",
+    symbol: "LOVE",
     image: "",
     bondingCurve: { type: "power", y: 2 },
     dexThreshold: 250000,
@@ -50,8 +50,8 @@ const SAMPLE_COINS: Coin[] = [
   },
   {
     id: nanoid(),
-    name: "Earth Credits",
-    symbol: "EARTH",
+    name: "Silicon Beach Exchange",
+    symbol: "SBX",
     image: "",
     bondingCurve: { type: "linear", y: 0.5 },
     dexThreshold: 1000000,
@@ -61,8 +61,8 @@ const SAMPLE_COINS: Coin[] = [
   },
   {
     id: nanoid(),
-    name: "Heal Token",
-    symbol: "HEAL",
+    name: "Coastline Stewardship",
+    symbol: "COAST",
     image: "",
     bondingCurve: { type: "power", y: 1.2 },
     dexThreshold: 100000,

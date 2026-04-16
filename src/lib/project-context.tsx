@@ -62,3 +62,15 @@ export function useProject() {
   if (!ctx) throw new Error("useProject must be used within ProjectProvider");
   return ctx;
 }
+
+// Markets alias — the KAM Studio surfaces Projects as Markets throughout the UI.
+export const useMarket = () => {
+  const { projects, activeProject, setActiveProject, refreshProjects, loading } = useProject();
+  return {
+    markets: projects,
+    activeMarket: activeProject,
+    setActiveMarket: setActiveProject,
+    refreshMarkets: refreshProjects,
+    loading,
+  };
+};

@@ -68,17 +68,89 @@ export interface Presence {
 export type ProjectVisibility = "secret" | "private" | "pending" | "public";
 export type ProjectStatus = "active" | "archived";
 
+// The Project interface is the on-disk record for a Kinship Action Market.
+// We keep the field name "Project" in the store for backwards compatibility,
+// but the UI surfaces it as "Market" (the KAM top-level container).
 export interface Project {
   id: string;
   name: string;
-  codeName: string;
+  codeName: string;          // handle used in URLs, e.g. "service-alliance"
   description: string;
   visibility: ProjectVisibility;
-  owner: string;
+  owner: string;             // Sponsor name
   createdAt: string;
   updatedAt: string;
-  team: string[];
+  team: string[];            // Sponsors, Operators, stewards
   status: ProjectStatus;
+  icon?: string;             // emoji or icon label shown in cards
+  accent?: string;           // hex accent color
+  sponsorMode?: "sponsor-funded" | "citizen-funded" | "membership" | "virtual";
+  ledger?: "solana" | "database";
+}
+
+// Alias — the Studio surfaces Projects as Markets everywhere in the UI.
+export type Market = Project;
+export type MarketVisibility = ProjectVisibility;
+export type MarketStatus = ProjectStatus;
+
+// ── Objective ────────────────────────────────────────────────────────────────
+// An Objective is a scoped area of activity inside a Market:
+// a campaign, a program line, a fund, a working group. Each Objective
+// carries its own value vector (the dimensions the Electors optimize).
+export type ObjectiveStatus = "draft" | "active" | "paused" | "closed";
+
+export interface ValueDimension {
+  id: string;
+  label: string;              // e.g. "Veteran Outcomes"
+  weight: number;             // 0–100 — share of the objective vector
+  direction?: "maximize" | "minimize";
+}
+
+export interface Objective {
+  id: string;
+  marketId: string;           // parent Market
+  name: string;
+  slug: string;
+  description: string;
+  icon?: string;
+  status: ObjectiveStatus;
+  operatorName?: string;      // Operator agent running the objective
+  valueVector: ValueDimension[];
+  resolutionWindowHours: number;
+  resolutionThreshold: number; // TWAP margin required to pass
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ── Proposal ────────────────────────────────────────────────────────────────
+// A Proposal is a specific decision under an Objective. When the Pass
+// conditional market clears, the resolution authorizes the Executor bundle.
+export type ProposalStatus = "draft" | "open" | "resolving" | "passed" | "failed" | "deployed";
+
+export interface ExecutorBinding {
+  name: string;
+  architect: string;
+  scope: string;              // what tools/actions this Executor gets
+}
+
+export interface Proposal {
+  id: string;
+  objectiveId: string;
+  marketId: string;
+  title: string;
+  summary: string;
+  authoredBy: string;         // Sponsor or delegated Operator
+  status: ProposalStatus;
+  opensAt: string;
+  closesAt: string;
+  passPrice: number;          // last TWAP on the Pass branch (0–1)
+  failPrice: number;          // last TWAP on the Fail branch (0–1)
+  volumePass: number;
+  volumeFail: number;
+  budgetUsd?: number;
+  executors: ExecutorBinding[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ── Agent Topology ────────────────────────────────────────────────────────────

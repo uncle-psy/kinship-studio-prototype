@@ -26,9 +26,13 @@ type Provider = {
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const categoryColor: Record<string, string> = {
-  "Supplements & Nutrition": "#22c55e",
-  "Wellness Technologies": "#3b82f6",
-  "Health Tech": "#06b6d4",
+  "Benefits Navigation": "#eb8000",
+  "Career Re-entry": "#22c55e",
+  "Education & Curriculum": "#f59e0b",
+  "Employer Certification": "#a855f7",
+  "Research Grants": "#06b6d4",
+  "Placemaking": "#3b82f6",
+  "Creator Fund": "#ec4899",
 };
 
 // Placeholder images for products without a real URL
@@ -37,163 +41,149 @@ const PH = (bg: string, fg: string) =>
 
 const initialProviders: Provider[] = [
   {
-    id: "new-earth",
-    name: "New Earth Technologies",
-    description: "Curated wellness brands offering supplements, technologies, and health solutions — each with a Champion affiliate program for Kinship promoters.",
-    logo: "https://placehold.co/80x80/111827/f97316?text=NET",
+    id: "service-alliance",
+    name: "Service Alliance",
+    description:
+      "Offerings commissioned through Service Alliance Markets — Executor-delivered services that close the gap between those who served and the systems built to support them. Champion margins fund VSO chapter operations.",
+    logo: "https://placehold.co/80x80/0c1d2e/eb8000?text=SA",
     offerings: [
       {
-        id: "lajit-gold",
-        name: "Lajit Gold",
-        category: "Supplements & Nutrition",
-        priceRange: "$45 – $100",
-        championMargin: "36%",
-        description: "Premium Sherpa-sourced Himalayan gold-grade shilajit resin and drops — lab-tested, sustainably harvested.",
-        imageUrl: PH("#2d1b00", "#f59e0b"),
+        id: "sa-peer-nav",
+        name: "Peer Navigator Session (1:1)",
+        category: "Benefits Navigation",
+        priceRange: "Free · sponsor-funded",
+        championMargin: "100% stipend to chapter",
+        description:
+          "A 60-minute working session with a trained Peer Navigator Executor that runs the veteran through benefits intake, mental-health screening, and claim filing.",
+        imageUrl: PH("#0c1d2e", "#eb8000"),
       },
       {
-        id: "high-vibe-mushrooms",
-        name: "High Vibe Mushrooms",
-        category: "Supplements & Nutrition",
-        priceRange: "$69 – $79",
-        championMargin: "36%",
-        description: "Certified full-spectrum proprietary blend of medicinal mushrooms using the most effective delivery systems.",
-        imageUrl: "https://highvibemushrooms.com/cdn/shop/files/8_28e2edc1-f00e-4f49-b8c6-e6d53c05f427_600x600.png?v=1749764923",
+        id: "sa-claim-filing",
+        name: "VA Claim Filing Executor",
+        category: "Benefits Navigation",
+        priceRange: "Free · sponsor-funded",
+        championMargin: "VSO partner fee",
+        description:
+          "Authorized on Proposal passage, this Executor assembles evidence, completes VA forms, and files claims end-to-end under its Kinship Code scope.",
+        imageUrl: PH("#0c1d2e", "#eb8000"),
       },
       {
-        id: "hi-massager",
-        name: "Hi Massager",
-        category: "Wellness Technologies",
-        priceRange: "$350",
-        championMargin: "45%",
-        description: "Patented percussive & vibrational massager that reduces stress, improves sleep, boosts relationships, and relieves pain.",
-        imageUrl: "https://i0.wp.com/www.himassager.com/wp-content/uploads/2019/08/hi-image.jpg?fit=1920%2C1080&ssl=1",
+        id: "sa-employer-cert",
+        name: "Service Alliance Employer Certification",
+        category: "Employer Certification",
+        priceRange: "$15k – $60k / yr",
+        championMargin: "30% to coordinating chapter",
+        description:
+          "Annual certification for employers who commit to mentor match, 12-month retention targets, and transparent reporting on veteran hires.",
+        imageUrl: PH("#0c1d2e", "#a855f7"),
       },
       {
-        id: "fullyvital",
-        name: "FullyVital",
-        category: "Wellness Technologies",
-        priceRange: "$100 – $239",
-        championMargin: "45%",
-        description: "Cutting-edge longevity science with clean, doctor-formulated haircare to reverse hair aging from the inside out.",
-        imageUrl: "https://cdn.shopify.com/s/files/1/0576/8118/2916/files/fully-vital-hair-growth-system-b1.jpg?v=1767280104&width=800",
+        id: "sa-reentry-placement",
+        name: "Career Re-entry Placement",
+        category: "Career Re-entry",
+        priceRange: "$2,500 placement fee",
+        championMargin: "40%",
+        description:
+          "Placement into a Service Alliance certified employer with a 12-month retention stipend for both the veteran and the hiring manager.",
+        imageUrl: PH("#0c1d2e", "#22c55e"),
+      },
+    ],
+  },
+  {
+    id: "loving-workplace",
+    name: "Center for a Loving Workplace",
+    description:
+      "Offerings authorized through CLW Markets — curriculum, certification, and research services delivered by CLW Executors under heart-centered standards.",
+    logo: "https://placehold.co/80x80/2d1d00/f59e0b?text=CLW",
+    offerings: [
+      {
+        id: "clw-loving-manager",
+        name: "Loving Manager Track (12-week cohort)",
+        category: "Education & Curriculum",
+        priceRange: "$1,200 / seat",
+        championMargin: "28%",
+        description:
+          "Twelve-week cohort for managers that pairs each participant with an Elector-coached feedback loop. Includes Modules 1–4 and cohort stipend.",
+        imageUrl: PH("#2d1d00", "#f59e0b"),
       },
       {
-        id: "spiro",
-        name: "Spiro",
-        category: "Health Tech",
-        priceRange: "$65 – $850",
-        championMargin: "36%",
-        description: "Patented SPIRO® system neutralizes harmful electromagnetic disturbances by filtering quantum noise and re-polarizing disruptive EMFs.",
-        imageUrl: "https://spiroemf.com/cdn/shop/files/SPIRO_CARD_-_BLUE_1.png?v=1771951626&width=800",
+        id: "clw-exec-track",
+        name: "Loving Executive Track",
+        category: "Education & Curriculum",
+        priceRange: "$4,800 / seat",
+        championMargin: "28%",
+        description:
+          "Six-session leadership track covering compassionate feedback, trauma-informed decision making, and values-weighted capital allocation.",
+        imageUrl: PH("#2d1d00", "#f59e0b"),
       },
       {
-        id: "self-decode",
-        name: "Self Decode",
-        category: "Health Tech",
-        priceRange: "$418 – $690",
-        championMargin: "36%",
-        description: "Advanced AI analyzes over 200 million genetic variants, delivering science-backed personalized health insights.",
-        imageUrl: "https://selfdecode.com/library/uploads/2025/03/new-dna-kit.png",
+        id: "clw-cert-audit",
+        name: "Loving Workplace Certification Audit",
+        category: "Employer Certification",
+        priceRange: "$22k – $75k",
+        championMargin: "20% to certified auditor",
+        description:
+          "Onsite audit, anonymous employee pulse, and renewal review — everything a Proposal needs to resolve a certification renewal decision.",
+        imageUrl: PH("#2d1d00", "#a855f7"),
       },
       {
-        id: "curcumin-pro",
-        name: "Curcumin Pro",
-        category: "Supplements & Nutrition",
-        priceRange: "$16 – $69",
-        championMargin: "45%",
-        description: "World's first full line of curcumin-enhanced products with a patented process enabling GI and blood-brain barrier penetration.",
-        imageUrl: "https://curcuminpro.com/wp-content/uploads/2025/04/gen-banner-2-scaled-1.webp",
+        id: "clw-research-grant",
+        name: "Research Replication Grant",
+        category: "Research Grants",
+        priceRange: "$50k – $500k",
+        championMargin: "5% grant admin",
+        description:
+          "Pre-registered replication grants disbursed by the Grants Executor against an OSF pre-registration and milestone schedule.",
+        imageUrl: PH("#2d1d00", "#06b6d4"),
+      },
+    ],
+  },
+  {
+    id: "silicon-beach",
+    name: "Silicon Beach Exchange",
+    description:
+      "Offerings issued by SBX Markets — placemaking services, creator grants, and residency programs delivered by Executors grounded in complementary consciousness.",
+    logo: "https://placehold.co/80x80/0a1f30/06b6d4?text=SBX",
+    offerings: [
+      {
+        id: "sbx-venue-series",
+        name: "Coastal Venue Series (6 weeks)",
+        category: "Placemaking",
+        priceRange: "$75k – $120k",
+        championMargin: "22% to host venue",
+        description:
+          "Coordinated six-week programming across four coastal venues. Executor orchestrates venue contracts, talent payout, permits, and after-actions.",
+        imageUrl: PH("#0a1f30", "#3b82f6"),
       },
       {
-        id: "scandilabs",
-        name: "Scandilabs",
-        category: "Supplements & Nutrition",
-        priceRange: "$52",
-        championMargin: "36%",
-        description: "Swedish simplicity meets cutting-edge biohacking, empowering individuals to thrive naturally through accessible wellness.",
-        imageUrl: PH("#1e3a5f", "#60a5fa"),
+        id: "sbx-creator-grant",
+        name: "Creator Fund Milestone Grant",
+        category: "Creator Fund",
+        priceRange: "$20k – $120k",
+        championMargin: "10% to residency producer",
+        description:
+          "Phased, milestone-based grant issued to resident creators whose work embodies complementary consciousness.",
+        imageUrl: PH("#0a1f30", "#ec4899"),
       },
       {
-        id: "lumaflex",
-        name: "LumaFlex",
-        category: "Wellness Technologies",
-        priceRange: "$599 – $689",
-        championMargin: "31.5%",
-        description: "Fully portable, flexible red light therapy device for faster recovery, discomfort relief, and elevated health on the go.",
-        imageUrl: PH("#450a0a", "#f87171"),
+        id: "sbx-residency",
+        name: "Annenberg Residency",
+        category: "Creator Fund",
+        priceRange: "$25k",
+        championMargin: "15%",
+        description:
+          "Two-week residency at the Annenberg Community Beach House including a public-facing installation and opening night curated by the Placemaking Operator.",
+        imageUrl: PH("#0a1f30", "#ec4899"),
       },
       {
-        id: "code-health",
-        name: "Code Health",
-        category: "Supplements & Nutrition",
-        priceRange: "$44 – $444",
-        championMargin: "45%",
-        description: "Therapeutic formulas infused with bio-energy patterns targeting root causes of cellular malfunction for self-repair.",
-        imageUrl: "https://codehealthshop.com/wp-content/uploads/2024/10/CODE-Health-Logo-Standard-CODE-White-500px.png",
-      },
-      {
-        id: "dr-cowans-garden",
-        name: "Dr. Cowan's Garden",
-        category: "Supplements & Nutrition",
-        priceRange: "$20 – $250",
-        championMargin: "31.5%",
-        description: "Pure, nutrient-dense foods using beyond-organic ingredients and traditional processing methods, naturally preserved.",
-        imageUrl: "https://www.drcowansgarden.com/cdn/shop/files/DCG_-_Kumquat_-_1920_x_1080_1_1400x.jpg",
-      },
-      {
-        id: "analemma-water",
-        name: "Analemma Water",
-        category: "Wellness Technologies",
-        priceRange: "$200 – $2,600",
-        championMargin: "31.5%",
-        description: "Restores water to its most vital state with stable, coherent structure that supports energy, immunity, and balance.",
-        imageUrl: PH("#0c2d48", "#38bdf8"),
-      },
-      {
-        id: "alii-supplements",
-        name: "Alii Supplements",
-        category: "Supplements & Nutrition",
-        priceRange: "$33 – $44",
-        championMargin: "27%",
-        description: "Thoughtfully formulated to restore all nutrients deleted by birth control, helping you feel revitalized and balanced.",
-        imageUrl: "https://aliisupplement.com/cdn/shop/files/HERO_IMAGE.jpg?v=1736536845&width=800",
-      },
-      {
-        id: "blue-scorpion",
-        name: "Blue Scorpion",
-        category: "Supplements & Nutrition",
-        priceRange: "$99 – $2,018",
-        championMargin: "45%",
-        description: "Harnesses rare Dominican scorpion venom to deliver natural, science-backed relief from pain and inflammation.",
-        imageUrl: PH("#1e1b4b", "#818cf8"),
-      },
-      {
-        id: "bengs-health",
-        name: "Bengs Health",
-        category: "Supplements & Nutrition",
-        priceRange: "$45 – $90",
-        championMargin: "31.5%",
-        description: "Scientifically validated, non-invasive technologies that harness the body's natural ability to heal through information-based methods.",
-        imageUrl: "https://bengshealth.com/wp-content/uploads/2024/08/Bengs_recover_donker_4000x4000-1024x1024.webp",
-      },
-      {
-        id: "jinfinity",
-        name: "Jinfinity",
-        category: "Wellness Technologies",
-        priceRange: "$50 – $1,500",
-        championMargin: "45%",
-        description: "Innovative longevity biomarkers and nutraceuticals for optimizing health through personalized precision interventions.",
-        imageUrl: "https://www.jinfiniti.com/wp-content/themes/yootheme/cache/9d/agingsos-test-box-9d1de46e.png",
-      },
-      {
-        id: "baloo-living",
-        name: "Baloo Living",
-        category: "Health Tech",
-        priceRange: "$54 – $321",
-        championMargin: "36%",
-        description: "Eco-conscious weighted blankets made from chemical-free cotton for cool, breathable comfort with a lifetime guarantee.",
-        imageUrl: "https://balooliving.com/cdn/shop/files/TF-XKZK-2PUN-TOTE_1.jpg",
+        id: "sbx-coastline",
+        name: "Coastline Stewardship Subscription",
+        category: "Placemaking",
+        priceRange: "$50 / mo",
+        championMargin: "5% to coastal steward",
+        description:
+          "Citizen-funded subscription — proceeds pool into the Coastline Objective where Electors representing kelp, pelican, and tide trade alongside humans.",
+        imageUrl: PH("#0a1f30", "#3b82f6"),
       },
     ],
   },
@@ -339,13 +329,21 @@ function AddOfferingModal({
   onClose: () => void;
 }) {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("Supplements & Nutrition");
+  const [category, setCategory] = useState("Benefits Navigation");
   const [priceRange, setPriceRange] = useState("");
   const [championMargin, setChampionMargin] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
-  const categories = ["Supplements & Nutrition", "Wellness Technologies", "Health Tech"];
+  const categories = [
+    "Benefits Navigation",
+    "Career Re-entry",
+    "Education & Curriculum",
+    "Employer Certification",
+    "Research Grants",
+    "Placemaking",
+    "Creator Fund",
+  ];
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
@@ -494,7 +492,7 @@ function OfferingCard({ offering }: { offering: Offering }) {
 
 export default function OfferingsPage() {
   const [providers, setProviders] = useState<Provider[]>(initialProviders);
-  const [expandedProviders, setExpandedProviders] = useState<Record<string, boolean>>({ "new-earth": true });
+  const [expandedProviders, setExpandedProviders] = useState<Record<string, boolean>>({ "service-alliance": true });
   const [showAddProvider, setShowAddProvider] = useState(false);
   const [addOfferingFor, setAddOfferingFor] = useState<string | null>(null);
 

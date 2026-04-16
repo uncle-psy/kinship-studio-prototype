@@ -91,56 +91,59 @@ function getStore(): KVStore {
 
 const SEED_PROJECTS: Project[] = [
   {
-    id: "proj_terra-ai",
-    name: "TerraAI",
-    codeName: "terra-ai",
-    description: "Predictive AI for climate-adaptive agriculture — reducing crop losses for smallholder farmers while building regenerative food systems",
+    id: "mkt_service-alliance",
+    name: "Service Alliance",
+    codeName: "service-alliance",
+    description:
+      "Closing the gap between those who served and the systems built to support them. Sponsors Operators that coordinate benefits, peer support, and career re-entry across VSOs, the VA, state agencies, and mission-aligned employers.",
     visibility: "public",
-    owner: "Dr. Amara Okafor",
-    createdAt: new Date("2025-06-15").toISOString(),
-    updatedAt: new Date("2026-03-28").toISOString(),
-    team: ["Dr. Amara Okafor", "Kofi Mensah", "Lina Voss"],
+    owner: "Service Alliance Sponsor",
+    createdAt: new Date("2025-11-04").toISOString(),
+    updatedAt: new Date("2026-04-12").toISOString(),
+    team: ["Service Alliance Sponsor", "Rick Gage (Operator)", "VSO Partner Council"],
     status: "active",
+    icon: "🎖️",
+    accent: "#eb8000",
+    sponsorMode: "sponsor-funded",
+    ledger: "database",
   },
   {
-    id: "proj_equilend",
-    name: "EquiLend",
-    codeName: "equilend",
-    description: "Decentralized micro-lending protocol providing fair-rate loans to underbanked communities with on-chain transparency and community governance",
+    id: "mkt_loving-workplace",
+    name: "Center for a Loving Workplace",
+    codeName: "loving-workplace",
+    description:
+      "Creates, curates, and amplifies research and education for a global, heart-centered community. Operators publish proposals on curriculum, employer certification, and published research; Electors price the tradeoffs against CLW's value vector.",
     visibility: "public",
-    owner: "Maya Rodriguez",
-    createdAt: new Date("2025-04-01").toISOString(),
-    updatedAt: new Date("2026-03-20").toISOString(),
-    team: ["Maya Rodriguez", "Daniel Osei", "Priya Patel"],
+    owner: "Center for a Loving Workplace",
+    createdAt: new Date("2025-09-22").toISOString(),
+    updatedAt: new Date("2026-04-14").toISOString(),
+    team: ["CLW Sponsor Council", "Research Operator", "Education Operator"],
     status: "active",
+    icon: "💛",
+    accent: "#f59e0b",
+    sponsorMode: "membership",
+    ledger: "database",
   },
   {
-    id: "proj_helix-health",
-    name: "Helix Health",
-    codeName: "helix-health",
-    description: "Decentralized telehealth network pairing AI diagnostics with human physicians to bring specialist care to underserved rural communities",
+    id: "mkt_silicon-beach",
+    name: "Silicon Beach Exchange",
+    codeName: "silicon-beach",
+    description:
+      "Connects and elevates the people, places, and experiences of the coast through AI agents grounded in complementary consciousness. Citizens configure Electors that trade on a values mix spanning culture, commerce, and community wellbeing.",
     visibility: "public",
-    owner: "Dr. James Whitfield",
-    createdAt: new Date("2025-08-10").toISOString(),
-    updatedAt: new Date("2026-04-02").toISOString(),
-    team: ["Dr. James Whitfield", "Sarah Chen", "Marcus Rivera"],
+    owner: "Silicon Beach Exchange",
+    createdAt: new Date("2025-10-10").toISOString(),
+    updatedAt: new Date("2026-04-15").toISOString(),
+    team: ["SBX Sponsor", "Coastal Operator", "Complementary-Consciousness Council"],
     status: "active",
-  },
-  {
-    id: "proj_civicchain",
-    name: "CivicChain",
-    codeName: "civicchain",
-    description: "On-chain transparent budgeting and governance tooling for municipalities — making every public dollar trackable and every decision auditable",
-    visibility: "public",
-    owner: "GovTech Alliance",
-    createdAt: new Date("2025-09-01").toISOString(),
-    updatedAt: new Date("2026-03-15").toISOString(),
-    team: ["GovTech Alliance", "Elena Vasquez", "Tom Briggs"],
-    status: "active",
+    icon: "🌊",
+    accent: "#06b6d4",
+    sponsorMode: "citizen-funded",
+    ledger: "solana",
   },
 ];
 
-const SEED_VERSION = "v2-kinship-duna";
+const SEED_VERSION = "v3-kinship-action-markets";
 let seeded = false;
 
 async function ensureSeeded() {
@@ -200,7 +203,7 @@ export async function createProject(data: {
 }): Promise<Project> {
   const kv = getStore();
   const { nanoid } = await import("nanoid");
-  const id = `proj_${nanoid(8)}`;
+  const id = `mkt_${nanoid(8)}`;
   const now = new Date().toISOString();
   const codeName =
     data.codeName?.trim() ||
@@ -219,6 +222,9 @@ export async function createProject(data: {
     updatedAt: now,
     team: teamMembers,
     status: "active",
+    icon: "📈",
+    sponsorMode: "sponsor-funded",
+    ledger: "database",
   };
 
   await kv.set(`project:${id}`, project);

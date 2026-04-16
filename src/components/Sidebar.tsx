@@ -4,13 +4,19 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { useProject } from "@/lib/project-context";
+import { useMarket } from "@/lib/project-context";
 
 const navSections = [
   {
+    label: "KINSHIP ACTION MARKETS",
+    items: [
+      { href: "/markets", icon: "lucide:layout-grid", label: "Markets", hint: "All Markets" },
+    ],
+  },
+  {
     label: "AGENTS",
     items: [
-      { href: "/agents", icon: "lucide:user-round", label: "Agents" },
+      { href: "/agents", icon: "lucide:user-round", label: "Agents", hint: "Operators, Electors, Executors" },
     ],
   },
   {
@@ -36,7 +42,6 @@ const navSections = [
       { href: "/experiences", icon: "lucide:compass", label: "Experiences" },
       { href: "/assets", icon: "lucide:library", label: "Library", badge: "63" },
       { href: "/assets/upload", icon: "lucide:upload-cloud", label: "Upload" },
-      { href: "/packs", icon: "lucide:package", label: "Asset Packs", tag: "NEW" },
     ],
   },
 ];
@@ -44,8 +49,8 @@ const navSections = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [projectsOpen, setProjectsOpen] = useState(true);
-  const { projects, activeProject, setActiveProject } = useProject();
+  const [marketsOpen, setMarketsOpen] = useState(true);
+  const { markets, activeMarket, setActiveMarket } = useMarket();
 
   return (
     <aside className="fixed left-0 top-[60px] w-[220px] h-[calc(100vh-60px)] bg-sidebar border-r border-card-border overflow-y-auto py-4 px-3">
@@ -56,7 +61,7 @@ export function Sidebar() {
         </div>
         <div className="px-3 py-1.5 text-accent text-sm flex items-center gap-2">
           <Icon icon="lucide:layers" width={16} height={16} className="text-accent" />
-          Kinship Agents
+          Kinship Studio
         </div>
       </div>
 
@@ -84,44 +89,57 @@ export function Sidebar() {
         </ul>
       </div>
 
-      {/* Projects */}
+      {/* Markets */}
       <div className="mb-4">
         <button
-          onClick={() => setProjectsOpen((o) => !o)}
+          onClick={() => setMarketsOpen((o) => !o)}
           className="w-full flex items-center justify-between text-[10px] font-semibold text-white/40 uppercase tracking-wider px-3 mb-1 hover:text-white/60 transition-colors"
         >
-          <span>Projects</span>
+          <span>Markets</span>
           <Icon
-            icon={projectsOpen ? "lucide:chevron-down" : "lucide:chevron-right"}
+            icon={marketsOpen ? "lucide:chevron-down" : "lucide:chevron-right"}
             width={12}
             height={12}
           />
         </button>
-        {projectsOpen && (
+        {marketsOpen && (
           <ul className="space-y-0.5">
-            {projects.map((project) => {
-              const isActive = activeProject?.id === project.id && !pathname.startsWith("/platform-settings");
+            {markets.map((market) => {
+              const isActive =
+                activeMarket?.id === market.id &&
+                !pathname.startsWith("/platform-settings");
               return (
-                <li key={project.id}>
+                <li key={market.id}>
                   <button
-                    onClick={() => { setActiveProject(project); if (pathname.startsWith("/platform-settings")) router.push("/agents"); }}
+                    onClick={() => {
+                      setActiveMarket(market);
+                      if (pathname.startsWith("/platform-settings")) {
+                        router.push(`/markets/${market.codeName}`);
+                      } else {
+                        router.push(`/markets/${market.codeName}`);
+                      }
+                    }}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
                         ? "bg-accent/20 text-accent"
                         : "text-white/70 hover:bg-white/[0.06] hover:text-white"
                     }`}
                   >
-                    <Icon
-                      icon="lucide:folder"
-                      width={18}
-                      height={18}
-                      className={isActive ? "text-accent" : "text-white"}
-                    />
-                    <span className="flex-1 text-left">{project.name}</span>
+                    <span className="text-base leading-none">{market.icon || "📈"}</span>
+                    <span className="flex-1 text-left truncate">{market.name}</span>
                   </button>
                 </li>
               );
             })}
+            <li>
+              <Link
+                href="/markets"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/50 hover:bg-white/[0.06] hover:text-white transition-colors"
+              >
+                <Icon icon="lucide:plus" width={16} height={16} />
+                <span>All Markets</span>
+              </Link>
+            </li>
           </ul>
         )}
       </div>
@@ -159,11 +177,6 @@ export function Sidebar() {
                     {"badge" in item && item.badge && (
                       <span className="bg-accent/20 text-accent text-xs px-2 py-0.5 rounded-full">
                         {item.badge}
-                      </span>
-                    )}
-                    {"tag" in item && item.tag && (
-                      <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                        {item.tag}
                       </span>
                     )}
                   </Link>

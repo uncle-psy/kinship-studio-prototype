@@ -5,7 +5,7 @@ import Link from "next/link";
 export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 h-[60px] bg-header border-b border-card-border flex items-center justify-between px-6 z-50">
-      <Link href="/experiences" className="flex items-center gap-2">
+      <Link href="/markets" className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-amber-700 flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
             <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -20,8 +20,8 @@ export function Header() {
       <div className="flex items-center gap-4">
         <button className="flex items-center gap-3 bg-white/[0.06] border border-card-border rounded-full px-4 py-1.5 hover:border-accent/50 transition-colors">
           <div className="text-left">
-            <div className="text-sm font-medium text-white">Kinship Agents</div>
-            <div className="text-xs text-muted">4 projects · 7 agents</div>
+            <div className="text-sm font-medium text-white">Kinship Action Markets</div>
+            <div className="text-xs text-muted">3 markets · 9 objectives</div>
           </div>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted ml-1">
             <path d="M6 9l6 6 6-6" />

@@ -20,36 +20,39 @@ const AGENT_LEVELS: {
 }[] = [
   {
     level: "presence",
-    label: "Presence",
-    tag: "Personal",
+    label: "Elector",
+    tag: "Citizen",
     icon: "lucide:user-round",
     color: "text-accent",
     bgColor: "bg-accent/15",
     description:
-      "A user's sovereign agent. Manages preferences, delegates to specialized workers, and enforces personal privacy boundaries. Every user gets one Presence.",
-    examples: "Coaching Agent, Investor Concierge, Patient Navigator, Personal Assistant",
+      "A Citizen's sovereign Elector. Trades Pass/Fail on every Proposal in the Markets it joins, priced against a value vector the Citizen configured once. Queries peer Electors and the Operator through the interaction layer.",
+    examples:
+      "Service Alliance veteran Elector, CLW heart-centered educator Elector, SBX coastal Citizen Elector",
   },
   {
     level: "project",
-    label: "Project Agent",
-    tag: "Team",
+    label: "Operator",
+    tag: "Sponsor",
     icon: "lucide:users",
     color: "text-purple-400",
     bgColor: "bg-purple-400/15",
     description:
-      "Coordinates multiple Presences within a Project. Manages shared context, delegates tasks based on capability and availability, and maintains team-level memory.",
-    examples: "Campaign Coordinator, Care Team Lead, Syndicate Manager, Production Lead",
+      "Published by the Sponsor. Runs the governance procedure for one or more Objectives: publishes Proposals, enforces the resolution rules, and emits Kinship Codes to Executors on Pass.",
+    examples:
+      "Benefits Operator (Service Alliance), Education Operator (CLW), Placemaking Operator (Silicon Beach)",
   },
   {
     level: "platform",
-    label: "Platform Agent",
-    tag: "Organization",
+    label: "Executor",
+    tag: "Architect",
     icon: "lucide:building-2",
     color: "text-amber-400",
     bgColor: "bg-amber-400/15",
     description:
-      "Coordinates across multiple Projects at the organizational level. Enforces platform-wide policies, maintains organizational memory, and manages cross-project workflows.",
-    examples: "Association Director, Network Orchestrator, Platform Governor",
+      "Built by an Architect. Carries scoped tool credentials and an operational playbook. On Pass, the Executor receives its Kinship Code and performs the authorized work — never outside its scope.",
+    examples:
+      "Peer Navigator Executor, LMS Migration Executor, Milestone Grant Executor, Venue Contract Executor",
   },
 ];
 
@@ -369,13 +372,13 @@ export default function AgentsPage() {
         <div className="bg-card border border-card-border rounded-xl p-6 mb-6">
           <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
             <Icon icon="lucide:layers" width={18} height={18} className="text-accent" />
-            The Nested Agent Topology
+            Three agent classes — Operators, Electors, Executors
           </h3>
           <p className="text-sm text-muted leading-relaxed mb-4">
-            Kinship agents operate at three nested levels. A single action can
-            involve a Platform agent coordinating multiple Project agents, each
-            coordinating the Presences of many users, with trust and privacy
-            enforced at every boundary.
+            In a Kinship Action Market, Sponsors publish <span className="text-white">Operators</span>,
+            Citizens configure <span className="text-white">Electors</span>, and Architects build{" "}
+            <span className="text-white">Executors</span>. Operators govern, Electors price Proposals,
+            and Executors carry out whatever the market resolves to deploy.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {AGENT_LEVELS.map((agent) => (
@@ -599,8 +602,8 @@ export default function AgentsPage() {
             No agents yet
           </h3>
           <p className="text-muted mb-6 max-w-md mx-auto">
-            Create a Presence (personal), Project Agent (team), or Platform
-            Agent (organization) to start building your multi-agent system.
+            Create an Elector (Citizen), an Operator (Sponsor), or an Executor (Architect) to start wiring
+            this Market&rsquo;s agents.
           </p>
           <button
             onClick={() => setShowChoiceModal(true)}

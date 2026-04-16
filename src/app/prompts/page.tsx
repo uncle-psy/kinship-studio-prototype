@@ -58,7 +58,8 @@ export default function PromptsPage() {
         <div>
           <h1 className="text-3xl font-bold text-white">Instruct</h1>
           <p className="text-muted mt-1">
-            {prompts.length} prompt{prompts.length !== 1 ? "s" : ""}
+            {prompts.length} prompt{prompts.length !== 1 ? "s" : ""} — the system prompts and chains
+            that bind each Operator, Elector, and Executor to its role.
           </p>
         </div>
         <button

@@ -5,11 +5,11 @@ import { Icon } from "@iconify/react";
 
 // ── Scope metadata ──────────────────────────────────────────────────────────
 const SCOPE_META: Record<string, { label: string; icon: string; color: string; desc: string }> = {
-  network:    { label: "Network",    icon: "lucide:globe",   color: "#F59E0B", desc: "Constitutional invariants for the entire ecosystem" },
-  platform:   { label: "Platform",   icon: "lucide:layers",  color: "#3B82F6", desc: "Platform-wide tonal envelope" },
-  project:    { label: "Project",    icon: "lucide:folder",  color: "#8B5CF6", desc: "Thematic and methodological constraints" },
-  experience: { label: "Experience", icon: "lucide:compass", color: "#10B981", desc: "Room tone for specific interactions" },
-  agent:      { label: "Agent",      icon: "lucide:bot",     color: "#EC4899", desc: "Persona-level expression bounds" },
+  network:    { label: "Network",    icon: "lucide:globe",       color: "#F59E0B", desc: "Constitutional invariants for the entire Kinship ecosystem" },
+  platform:   { label: "Platform",   icon: "lucide:layers",      color: "#3B82F6", desc: "Platform-wide tonal envelope across every Market" },
+  project:    { label: "Market",     icon: "lucide:layout-grid", color: "#8B5CF6", desc: "Sponsor-specific constraints that travel with every Objective and Proposal" },
+  experience: { label: "Experience", icon: "lucide:compass",     color: "#10B981", desc: "Room tone for the specific interactions inside a Market" },
+  agent:      { label: "Agent",      icon: "lucide:bot",         color: "#EC4899", desc: "Persona-level expression bounds for a single Operator, Elector, or Executor" },
 };
 const SCOPES = ["network", "platform", "project", "experience", "agent"] as const;
 type Scope = (typeof SCOPES)[number];

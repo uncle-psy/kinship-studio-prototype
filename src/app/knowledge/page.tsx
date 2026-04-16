@@ -53,7 +53,8 @@ export default function KnowledgePage() {
         <div>
           <h1 className="text-3xl font-bold text-white">Inform</h1>
           <p className="text-muted mt-1">
-            {knowledgeBases.length} knowledge base{knowledgeBases.length !== 1 ? "s" : ""}
+            {knowledgeBases.length} knowledge base{knowledgeBases.length !== 1 ? "s" : ""} — the
+            vector memory every Operator, Elector, and Executor in this Market draws on.
           </p>
         </div>
         <button
@@ -151,8 +152,9 @@ export default function KnowledgePage() {
             No knowledge bases yet
           </h3>
           <p className="text-muted mb-6 max-w-md mx-auto">
-            Create a knowledge base to store documents, files, and AI-generated
-            content for your AI interactions.
+            Create a knowledge base — e.g. a VA benefits corpus for Service Alliance, a CLW research
+            library, or an SBX coastal-ecology dataset — for Operators, Electors, and Executors to
+            draw on.
           </p>
           <button
             onClick={() => setShowCreate(true)}
